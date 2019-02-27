@@ -2,6 +2,8 @@ import sys
 import irc.bot
 import requests
 
+# count travystys
+
 class TwitchBot(irc.bot.SingleServerIRCBot):
     def __init__(self, username, client_id, token, channel):
         self.client_id = client_id
@@ -19,7 +21,6 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         port = 6667
         print('Connecting to ' + server + ' on port ' + str(port) + '...')
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port, 'oauth:'+token)], username, username)
-        
 
     def on_welcome(self, c, e):
         print('Joining ' + self.channel)
@@ -68,6 +69,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         else:
             c.privmsg(self.channel, "Did not understand command: " + cmd)
 
+
 def main():
     if len(sys.argv) != 5:
         print("Usage: twitchbot <username> <client id> <token> <channel>")
@@ -80,6 +82,7 @@ def main():
 
     bot = TwitchBot(username, client_id, token, channel)
     bot.start()
+
 
 if __name__ == "__main__":
     main()
