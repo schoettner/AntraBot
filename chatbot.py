@@ -9,6 +9,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         self.client_id = client_id
         self.token = token
         self.channel = '#' + channel
+        self.count = 0
 
         # Get the channel id, we will need this for v5 API calls
         url = 'https://api.twitch.tv/kraken/users?login=' + channel
@@ -44,25 +45,30 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         c = self.connection
 
         # Poll the API to get current game.
-        if cmd == "game":
-            url = 'https://api.twitch.tv/kraken/channels/' + self.channel_id
-            headers = {'Client-ID': self.client_id, 'Accept': 'application/vnd.twitchtv.v5+json'}
-            r = requests.get(url, headers=headers).json()
-            c.privmsg(self.channel, r['display_name'] + ' is currently playing ' + r['game'])
+        # if cmd == "game":
+        #     url = 'https://api.twitch.tv/kraken/channels/' + self.channel_id
+        #     headers = {'Client-ID': self.client_id, 'Accept': 'application/vnd.twitchtv.v5+json'}
+        #     r = requests.get(url, headers=headers).json()
+        #     c.privmsg(self.channel, r['display_name'] + ' is currently playing ' + r['game'])
 
         # Poll the API the get the current status of the stream
-        elif cmd == "title":
-            url = 'https://api.twitch.tv/kraken/channels/' + self.channel_id
-            headers = {'Client-ID': self.client_id, 'Accept': 'application/vnd.twitchtv.v5+json'}
-            r = requests.get(url, headers=headers).json()
-            c.privmsg(self.channel, r['display_name'] + ' channel title is currently ' + r['status'])
+        # elif cmd == "title":
+        #     url = 'https://api.twitch.tv/kraken/channels/' + self.channel_id
+        #     headers = {'Client-ID': self.client_id, 'Accept': 'application/vnd.twitchtv.v5+json'}
+        #     r = requests.get(url, headers=headers).json()
+        #     c.privmsg(self.channel, r['display_name'] + ' channel title is currently ' + r['status'])
 
         # Provide basic information to viewers for specific commands
-        elif cmd == "raffle":
-            message = "This is an example bot, replace this text with your raffle text."
+        if cmd == "bot":
+            message = "AntraBot is up and running. Getting more powerful"
             c.privmsg(self.channel, message)
-        elif cmd == "schedule":
-            message = "This is an example bot, replace this text with your schedule text."            
+        elif cmd == "count":
+            self.count += 1
+            message = "count is at %s" % self.count
+            c.privmsg(self.channel, message)
+        elif cmd == "countreset":
+            self.count = 0
+            message = "count is at %s" % self.count
             c.privmsg(self.channel, message)
 
         # The command was not recognized
