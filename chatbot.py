@@ -1,6 +1,7 @@
 import sys
 import irc.bot
 import requests
+from irc.client import Event, ServerConnection
 
 # count travystys
 
@@ -32,14 +33,28 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         c.cap('REQ', ':twitch.tv/commands')
         c.join(self.channel)
 
-    def on_pubmsg(self, c, e):
+    def on_pubmsg(self, c : ServerConnection, e: Event):
 
+        badges = e.tags[0]
+        allowed = self.is_mod(badges)
+        if allowed is False:
+            return
         # If a chat message starts with an exclamation point, try to run it as a command
         if e.arguments[0][:1] == '!':
             cmd = e.arguments[0].split(' ')[0][1:]
             print('Received command: ' + cmd)
             self.do_command(e, cmd)
         return
+
+    def is_mod(self, badges: dict):
+        badge_value = badges['value']
+        if badge_value is None:
+            return False
+        moderator = 'moderator' in badge_value
+        broadcaster = 'broadcaster' in badge_value
+        print(moderator or broadcaster)
+        return moderator or broadcaster
+
 
     def do_command(self, e, cmd):
         c = self.connection
