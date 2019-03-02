@@ -88,6 +88,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             c.privmsg(self.channel, message)
         elif cmd == "vysquote":
             message = self.read_quotes()
+            print(message)
             c.privmsg(self.channel, message)
 
         # The command was not recognized
@@ -98,10 +99,8 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         file = open(file_name, 'r')
         lines = file.readlines()
         rand = randint(0, len(lines)-1)
-        # print("lines: %s" % len(lines))
-        # print("random: %s" % rand)
-        # print(lines[rand])
-        return lines[rand]
+        message = lines[rand]
+        return message[:-1]  # remove the new line character. throws error in icr client
 
 
 def main():
