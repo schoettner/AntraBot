@@ -2,6 +2,7 @@ import sys
 import irc.bot
 import requests
 from irc.client import Event, ServerConnection
+from random import randint
 
 # count travystys
 
@@ -85,10 +86,22 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             self.count = 0
             message = "count is at %s" % self.count
             c.privmsg(self.channel, message)
+        elif cmd == "vysquote":
+            message = self.read_quotes()
+            c.privmsg(self.channel, message)
 
         # The command was not recognized
-        else:
-            c.privmsg(self.channel, "Did not understand command: " + cmd)
+        # else:
+        #     c.privmsg(self.channel, "Did not understand command: " + cmd)
+
+    def read_quotes(self, file_name='quotation.txt'):
+        file = open(file_name, 'r')
+        lines = file.readlines()
+        rand = randint(0, len(lines)-1)
+        # print("lines: %s" % len(lines))
+        # print("random: %s" % rand)
+        # print(lines[rand])
+        return lines[rand]
 
 
 def main():
