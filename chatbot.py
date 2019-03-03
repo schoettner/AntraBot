@@ -98,15 +98,21 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             message = "AntraBot is up and running. Getting more powerful"
             c.privmsg(self.channel, message)
         elif cmd == "antrabot":
-            message = "The public commands are: bot, vysquote, sub"
+            message = "The public commands are: !bot, !vysquote, !sub, !boss, !zote"
             print(message)
             c.privmsg(self.channel, message)
+        elif cmd == "boss":
+            message = self.read_file('bosses.txt')
+            c.privmsg(self.channel, message)
         elif cmd == "vysquote":
-            message = self.read_quotes()
+            message = self.read_file()
             logging.debug("The printed quote will be: %s" % message)
             c.privmsg(self.channel, message)
         elif cmd == "purple":
-            message = "dont listen to StreamElements. The knight is purple due to black magic."
+            message = "Dont listen to StreamElements. The knight is purple due to black magic."
+            c.privmsg(self.channel, message)
+        elif cmd == "zote":
+            message = "He who must not be named. Just pass by and let Vengefly King let do its job."
             c.privmsg(self.channel, message)
         elif cmd == "sub":
             sub = e.tags[8]['value']  # is subbed this is 1 (as str)
@@ -146,14 +152,17 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
 
         # special commands
         elif cmd == "modcommands":
-            message = "Moderators use the public commands and: !counter, !count, !countdown, !countreset, !antra"
+            message = "Moderators use the public commands and: !counter, !count, !countdown, !countreset, !welcome, !antra"
+            c.privmsg(self.channel, message)
+        elif cmd == "welcome":
+            message = ("Welcome new follower. You made a wise choice to follow %s. Sit back and enjoy your time." % self.channel)
             c.privmsg(self.channel, message)
         elif cmd == "antra":
             print(e)
             message = "This is a debug command for the dark lord himself. Do not worry about it."
             c.privmsg(self.channel, message)
 
-    def read_quotes(self, file_name: str ='quotation.txt'):
+    def read_file(self, file_name: str = 'quotation.txt'):
         """
         read quote lines from a text file. The file is loaded every time to allow dynamic changes without a bot restart
         :param file_name: name of the textfile with the quotes. has to be in the same folder
