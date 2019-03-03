@@ -1,0 +1,35 @@
+# my tag
+type: pubmsg, source: antrazith!antrazith@antrazith.tmi.twitch.tv, target: #vysualstv,
+arguments: ['!sub'],
+tags: [
+{'key': 'badges', 'value': 'moderator/1,subscriber/0'},
+{'key': 'color', 'value': None},
+{'key': 'display-name', 'value': 'antrazith'},
+{'key': 'emotes', 'value': None},
+{'key': 'flags', 'value': None},
+{'key': 'id', 'value': 'b17cb0cc-020e-4870-b852-b41552293607'},
+{'key': 'mod', 'value': '1'},
+{'key': 'room-id', 'value': '40845619'},
+{'key': 'subscriber', 'value': '1'},
+{'key': 'tmi-sent-ts', 'value': '1551649272633'},
+{'key': 'turbo', 'value': '0'},
+{'key': 'user-id', 'value': '60432977'},
+{'key': 'user-type', 'value': 'mod'}
+]
+
+# from vys
+[
+{'value': 'broadcaster/1,subscriber/12,bits-charity/1', 'key': 'badges'},
+{'value': '#8A2BE2', 'key': 'color'},
+{'value': 'VysuaLsTV', 'key': 'display-name'},
+{'value': None, 'key': 'emotes'},
+{'value': None, 'key': 'flags'},
+{'value': '640de2c3-a6d7-4066-b819-3535a8efb412', 'key': 'id'},
+{'value': '0', 'key': 'mod'},
+{'value': '40845619', 'key': 'room-id'},
+{'value': '1', 'key': 'subscriber'},
+{'value': '1551650305782', 'key': 'tmi-sent-ts'},
+{'value': '0', 'key': 'turbo'},
+{'value': '40845619', 'key': 'user-id'},
+{'value': None, 'key': 'user-type'}
+]

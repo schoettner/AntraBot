@@ -7,9 +7,6 @@ import logging
 from irc.client import Event, ServerConnection
 
 
-# count travystys
-
-
 class TwitchBot(irc.bot.SingleServerIRCBot):
 
     def __init__(self, username, client_id, token, channel):
@@ -48,18 +45,24 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         :param e: the event. it contains sender, message, badges etc
         :return: None
         """
-        badges = e.tags[0]
-        allowed = self.command_permission(badges)
-        if allowed is False:
-            return
-        # If a chat message starts with an exclamation point, try to run it as a command
+
+        # get the command
         if e.arguments[0][:1] == '!':
             cmd = e.arguments[0].split(' ')[0][1:]
             logging.info('Received command: ' + cmd)
-            self.do_command(e, cmd)
-        return
+        else:
+            # leave if its not a command
+            return
 
-    def command_permission(self, badges: dict):
+        # execute public command
+        self.public_command(e, cmd)
+
+        # execute the moderator commands
+        allowed = self.get_command_permission(e.tags[0])
+        if allowed is True:
+            self.special_command(e, cmd)
+
+    def get_command_permission(self, badges: dict):
         """
         checks if the badge list contains either broadcaster, moderator or vip
         :param badges: the whole bade list
@@ -87,18 +90,16 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             return False
         return badge_name in badges_value
 
-    def do_command(self, e: Event, cmd: str):
-        """
-        execute a command. the permissions are not checked in here
-        :param e: the event if required for any more details of the command
-        :param cmd: the command as string
-        :return: None
-        """
+    def public_command(self, e: Event, cmd: str):
         c = self.connection
 
         # general commands
         if cmd == "bot":
             message = "AntraBot is up and running. Getting more powerful"
+            c.privmsg(self.channel, message)
+        elif cmd == "antrabot":
+            message = "The public commands are: bot, vysquote, sub"
+            print(message)
             c.privmsg(self.channel, message)
         elif cmd == "vysquote":
             message = self.read_quotes()
@@ -106,11 +107,28 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             c.privmsg(self.channel, message)
         elif cmd == "purple":
             message = "dont listen to StreamElements. The knight is purple due to black magic."
-            logging.debug("The printed quote will be: %s" % message)
+            c.privmsg(self.channel, message)
+        elif cmd == "sub":
+            sub = e.tags[8]['value']  # is subbed this is 1 (as str)
+            name = e.tags[2]['value']  # get the display name
+            if sub == "1":
+                message = ("Well done %s, you are subscribed. Keep being subbed to increase your power even more!" % name)
+            else:
+                message = ("I see %s. You lack in power. You should subscribe to @VysuaLsTV to fix this." % name)
             c.privmsg(self.channel, message)
 
-        # counting commands
-        elif cmd == "counter":
+    def special_command(self, e: Event, cmd: str):
+        """
+        execute a command. the permissions are not checked in here.
+        only moderator etc should be allowed to use those commands.
+        :param e: the event if required for any more details of the command
+        :param cmd: the command as string
+        :return: None
+        """
+        c = self.connection
+
+        # counting commands 'travesty' or 'unfortunate'
+        if cmd == "counter":
             message = "count is at %s" % self.count
             c.privmsg(self.channel, message)
         elif cmd == "count":
@@ -126,7 +144,14 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             message = "count is at %s" % self.count
             c.privmsg(self.channel, message)
 
-
+        # special commands
+        elif cmd == "modcommands":
+            message = "Moderators use the public commands and: !counter, !count, !countdown, !countreset, !antra"
+            c.privmsg(self.channel, message)
+        elif cmd == "antra":
+            print(e)
+            message = "This is a debug command for the dark lord himself. Do not worry about it."
+            c.privmsg(self.channel, message)
 
     def read_quotes(self, file_name: str ='quotation.txt'):
         """
