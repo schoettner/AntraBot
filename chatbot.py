@@ -1,16 +1,23 @@
 import sys
+from random import randint
+
 import irc.bot
 import requests
+import logging
 from irc.client import Event, ServerConnection
-from random import randint
+
 
 # count travystys
 
+
 class TwitchBot(irc.bot.SingleServerIRCBot):
+
     def __init__(self, username, client_id, token, channel):
         self.client_id = client_id
         self.token = token
         self.channel = '#' + channel
+
+        # command specific values
         self.count = 0
 
         # Get the channel id, we will need this for v5 API calls
@@ -25,7 +32,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         print('Connecting to ' + server + ' on port ' + str(port) + '...')
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port, 'oauth:'+token)], username, username)
 
-    def on_welcome(self, c, e):
+    def on_welcome(self, c : ServerConnection, e: Event):
         print('Joining ' + self.channel)
 
         # You must request specific capabilities before you can use them
@@ -35,71 +42,98 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         c.join(self.channel)
 
     def on_pubmsg(self, c : ServerConnection, e: Event):
-
+        """
+        this is called every time a message is received. keep this signature due to the icr interface
+        :param c: the server connection. can be used to transfer an message
+        :param e: the event. it contains sender, message, badges etc
+        :return: None
+        """
         badges = e.tags[0]
-        allowed = self.is_mod(badges)
+        allowed = self.command_permission(badges)
         if allowed is False:
             return
         # If a chat message starts with an exclamation point, try to run it as a command
         if e.arguments[0][:1] == '!':
             cmd = e.arguments[0].split(' ')[0][1:]
-            print('Received command: ' + cmd)
+            logging.info('Received command: ' + cmd)
             self.do_command(e, cmd)
         return
 
-    def is_mod(self, badges: dict):
+    def command_permission(self, badges: dict):
+        """
+        checks if the badge list contains either broadcaster, moderator or vip
+        :param badges: the whole bade list
+        :return: Boolean if one of the demanded badges is given
+        """
         badge_value = badges['value']
         if badge_value is None:
             return False
-        moderator = 'moderator' in badge_value
-        broadcaster = 'broadcaster' in badge_value
-        vip = 'vip' in badge_value
-        print(moderator or broadcaster or vip)
-        return moderator or broadcaster or vip
+        moderator = self.has_badge(badges)
+        broadcaster = self.has_badge(badges, 'broadcaster')
+        vip = self.has_badge(badges, 'vip')
+        permission = moderator or broadcaster or vip
+        logging.debug("Can use command: %s" % permission)
+        return permission
 
+    def has_badge(self, badges: dict, badge_name: str = 'moderator'):
+        """
+        check if the badge list contains a specific badge
+        :param badges: the whole badge list
+        :param badge_name: the badge you are looking for
+        :return: if the badge is in the list
+        """
+        badges_value = badges['value']
+        if badges_value is None:
+            return False
+        return badge_name in badges_value
 
-    def do_command(self, e, cmd):
+    def do_command(self, e: Event, cmd: str):
+        """
+        execute a command. the permissions are not checked in here
+        :param e: the event if required for any more details of the command
+        :param cmd: the command as string
+        :return: None
+        """
         c = self.connection
 
-        # Poll the API to get current game.
-        # if cmd == "game":
-        #     url = 'https://api.twitch.tv/kraken/channels/' + self.channel_id
-        #     headers = {'Client-ID': self.client_id, 'Accept': 'application/vnd.twitchtv.v5+json'}
-        #     r = requests.get(url, headers=headers).json()
-        #     c.privmsg(self.channel, r['display_name'] + ' is currently playing ' + r['game'])
-
-        # Poll the API the get the current status of the stream
-        # elif cmd == "title":
-        #     url = 'https://api.twitch.tv/kraken/channels/' + self.channel_id
-        #     headers = {'Client-ID': self.client_id, 'Accept': 'application/vnd.twitchtv.v5+json'}
-        #     r = requests.get(url, headers=headers).json()
-        #     c.privmsg(self.channel, r['display_name'] + ' channel title is currently ' + r['status'])
-
-        # Provide basic information to viewers for specific commands
+        # general commands
         if cmd == "bot":
             message = "AntraBot is up and running. Getting more powerful"
             c.privmsg(self.channel, message)
+        elif cmd == "vysquote":
+            message = self.read_quotes()
+            logging.debug("The printed quote will be: %s" % message)
+            c.privmsg(self.channel, message)
+        elif cmd == "purple":
+            message = "dont listen to StreamElements. The knight is purple due to black magic."
+            logging.debug("The printed quote will be: %s" % message)
+            c.privmsg(self.channel, message)
+
+        # counting commands
+        elif cmd == "counter":
+            message = "count is at %s" % self.count
+            c.privmsg(self.channel, message)
         elif cmd == "count":
             self.count += 1
+            message = "count is at %s" % self.count
+            c.privmsg(self.channel, message)
+        elif cmd == "countdown":
+            self.count -= 1
             message = "count is at %s" % self.count
             c.privmsg(self.channel, message)
         elif cmd == "countreset":
             self.count = 0
             message = "count is at %s" % self.count
             c.privmsg(self.channel, message)
-        elif cmd == "counter":
-            message = "count is at %s" % self.count
-            c.privmsg(self.channel, message)
-        elif cmd == "vysquote":
-            message = self.read_quotes()
-            print(message)
-            c.privmsg(self.channel, message)
 
-        # The command was not recognized
-        # else:
-        #     c.privmsg(self.channel, "Did not understand command: " + cmd)
 
-    def read_quotes(self, file_name='quotation.txt'):
+
+    def read_quotes(self, file_name: str ='quotation.txt'):
+        """
+        read quote lines from a text file. The file is loaded every time to allow dynamic changes without a bot restart
+        :param file_name: name of the textfile with the quotes. has to be in the same folder
+        :return: None
+        """
         file = open(file_name, 'r')
         lines = file.readlines()
         rand = randint(0, len(lines)-1)
@@ -112,10 +146,10 @@ def main():
         print("Usage: twitchbot <username> <client id> <token> <channel>")
         sys.exit(1)
 
-    username  = sys.argv[1]
+    username = sys.argv[1]
     client_id = sys.argv[2]
-    token     = sys.argv[3]
-    channel   = sys.argv[4]
+    token = sys.argv[3]
+    channel = sys.argv[4]
 
     bot = TwitchBot(username, client_id, token, channel)
     bot.start()
