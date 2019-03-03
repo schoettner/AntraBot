@@ -53,8 +53,9 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             return False
         moderator = 'moderator' in badge_value
         broadcaster = 'broadcaster' in badge_value
-        print(moderator or broadcaster)
-        return moderator or broadcaster
+        vip = 'vip' in badge_value
+        print(moderator or broadcaster or vip)
+        return moderator or broadcaster or vip
 
 
     def do_command(self, e, cmd):
@@ -84,6 +85,9 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             c.privmsg(self.channel, message)
         elif cmd == "countreset":
             self.count = 0
+            message = "count is at %s" % self.count
+            c.privmsg(self.channel, message)
+        elif cmd == "counter":
             message = "count is at %s" % self.count
             c.privmsg(self.channel, message)
         elif cmd == "vysquote":
