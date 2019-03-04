@@ -53,7 +53,7 @@ class Boss(object):
         boss_list, boss_count = self.get_all_bosses()
 
         # check if the id is in a valid range
-        if boss_id > boss_count:
+        if boss_id >= boss_count:
             return 'no boss', 0
 
         boss = boss_list[boss_id]

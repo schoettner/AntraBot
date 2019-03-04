@@ -16,9 +16,9 @@ class Upgrade(object):
         :param upgrade_id: the identifier of the upgrade
         :return: returns the dict of the upgrade or None if the identifier was not found
         """
-        upgrades_list = self.get_all_upgrades()
+        upgrades_list, upgrade_count = self.get_all_upgrades()
 
-        if upgrade_id >= len(upgrades_list):
+        if upgrade_id >= upgrade_count:
             return None
 
         for entry in upgrades_list:
@@ -27,7 +27,7 @@ class Upgrade(object):
             logging.debug('upgrade not found in database')
         return None
 
-    def get_upgrades(self, upgrade_ids: list):
+    def get_upgrades_by_id(self, upgrade_ids: list):
         """
         load multiple upgrades at once
 
@@ -49,11 +49,12 @@ class Upgrade(object):
             cost - int: geo costs of the upgrade
             requires - int: id of an item required for the upgrade. this prevents that you can jump from old to pure nail in one purchase
 
-        :return: a dict with all upgrades
+        :return: a list with all upgrades, the number of available upgrades
         """
         with open(self.upgrades_file) as f:
             upgrades_list = json.load(f)
-        return upgrades_list
+        upgrade_count = len(upgrades_list)
+        return upgrades_list, upgrade_count
 
     def meets_requirements(self, desired_upgrade: dict, owned_upgrades: list):
         """
@@ -78,5 +79,5 @@ class Upgrade(object):
 
 if __name__ == "__main__":
     upgrade = Upgrade()
-    msg = upgrade.get_upgrade(1)
+    msg = upgrade.get_upgrade(10)
     print(msg)
