@@ -4,7 +4,7 @@ from random import randint
 from player import Player
 
 
-class Battle(object):
+class Boss(object):
     """
     allow a twitch chat member to fight hollow knight boss enemies
     """
@@ -21,7 +21,8 @@ class Battle(object):
         :param player: the player that fights the boss
         :return: the result message of the fight
         """
-        max_index = self.get_boss_count() - 1  # zero based index
+        _, boss_count = self.get_all_bosses()
+        max_index = boss_count - 1  # zero based index
         boss_id = randint(0, max_index)
         return self.fight_boss(player, boss_id)
 
@@ -47,30 +48,25 @@ class Battle(object):
         load a boss from the provided json file
 
         :param boss_id: the id of the boss you want
-        :return: the name and the strength of the boss
+        :return: the name of the boss as str, the strength of the boss as int
         """
-        with open(self.bosses_file) as f:
-            boss_list = json.load(f)
+        boss_list, boss_count = self.get_all_bosses()
+
+        # check if the id is in a valid range
+        if boss_id > boss_count:
+            return 'no boss', 0
+
         boss = boss_list[boss_id]
         boss_name = boss['name']
         boss_strength = boss['strength']
         return boss_name, boss_strength
 
-    def get_boss_count(self):
+    def get_all_bosses(self):
         """
-        get how many bosses are available in the given boss file. this might be used to fight a random boss.
-        the file is red every time to allow boss changes without restarting the bot
-
-        :return: the total amount of bosses available
+        get all bosses
+        :return: list of bosses, number of bosses available
         """
         with open(self.bosses_file) as f:
             boss_list = json.load(f)
         boss_count = len(boss_list)
-        return boss_count
-
-
-if __name__ == "__main__":
-    battle = Battle()
-    # msg = battle.fight_boss(10, 2)
-    msg = battle.fight_random_boss(10)
-    print(msg)
+        return boss_list, boss_count

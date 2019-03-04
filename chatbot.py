@@ -6,7 +6,7 @@ import requests
 import logging
 from irc.client import Event, ServerConnection
 
-from battle import Battle
+from boss import Boss
 from player import Player
 
 
@@ -21,7 +21,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         self.quotation_file = 'config/quotation.txt'
         self.boss_file = 'config/bosses.txt'
         self.count = 0
-        self.battle = Battle()
+        self.battle = Boss()
 
         # Get the channel id, we will need this for v5 API calls
         url = 'https://api.twitch.tv/kraken/users?login=' + channel

@@ -130,6 +130,10 @@ class Player(object):
             players = json.load(players_file)
         return players
 
+    def save_player_upgrade(self):
+        # save the players progress so its the same after the next restart
+        return None
+
 
 if __name__ == "__main__":
     player = Player("antrazith")
