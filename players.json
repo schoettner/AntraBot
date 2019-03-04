@@ -1,0 +1,12 @@
+[
+  {
+    "name": "antrazith",
+    "strength": 9000,
+    "upgrades": [
+      {
+        "item": "pure nail",
+        "strength": 500
+      }
+    ]
+  }
+]

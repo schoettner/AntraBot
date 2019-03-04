@@ -31,6 +31,11 @@ Start command for AntraBot
 python3 chatbot.py AntraBot jycvlymxj2qacjlw08c1t5ud7vqgif <token> antrazith
 ```
 
+### Known issues
+|info|solved|
+|-----------|----------------------------------------------------------------|
+| messages sent from the irc client do sometimes not appear in twitch chat | no |
+
 
 ### References
 [Example-Code from Amazon](https://github.com/twitchdev/chat-samples/tree/master/python)

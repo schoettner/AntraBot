@@ -7,6 +7,7 @@ import logging
 from irc.client import Event, ServerConnection
 
 from battle import Battle
+from player import Player
 
 
 class TwitchBot(irc.bot.SingleServerIRCBot):
@@ -101,14 +102,15 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             message = "AntraBot is up and running. Getting more powerful"
             c.privmsg(self.channel, message)
         elif cmd == "antrabot":
-            message = "The public commands are: !bot, !vysquote, !sub, !boss, !zote"
+            message = "The public commands are: !bot, !vysquote, !sub, !boss, !zote, !battle"
             print(message)
             c.privmsg(self.channel, message)
         elif cmd == "boss":
-            message = self.read_file('bosses.txt')
+            # todo replace
+            message = self.read_random_line_from_file('bosses.txt')
             c.privmsg(self.channel, message)
         elif cmd == "vysquote":
-            message = self.read_file()
+            message = self.read_random_line_from_file()
             logging.debug("The printed quote will be: %s" % message)
             c.privmsg(self.channel, message)
         elif cmd == "purple":
@@ -126,7 +128,10 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
                 message = ("I see %s. You lack in power. You should subscribe to @VysuaLsTV to fix this." % name)
             c.privmsg(self.channel, message)
         elif cmd == "battle":
-            message = self.battle.fight_random_boss(10)
+            name = e.tags[2]['value']  # get the display name
+            player = Player(name)
+            strength = player.get_strength()
+            message = self.battle.fight_random_boss(strength)
             # message = self.battle.fight_boss(10, 2)
             c.privmsg(self.channel, message)
 
@@ -169,7 +174,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             message = "This is a debug command for the dark lord himself. Do not worry about it."
             c.privmsg(self.channel, message)
 
-    def read_file(self, file_name: str = 'quotation.txt'):
+    def read_random_line_from_file(self, file_name: str = 'quotation.txt'):
         """
         read quote lines from a text file. The file is loaded every time to allow dynamic changes without a bot restart
         :param file_name: name of the textfile with the quotes. has to be in the same folder
@@ -179,7 +184,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         lines = file.readlines()
         rand = randint(0, len(lines)-1)
         message = lines[rand]
-        return message[:-1]  # remove the new line character. throws error in icr client
+        return message[:-1]  # remove the new line character. throws error in irc client
 
 
 def main():
