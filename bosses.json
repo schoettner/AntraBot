@@ -1,0 +1,17 @@
+[
+  {
+    "id": 0,
+    "name": "Training Dummy",
+    "strength": 1
+  },
+  {
+    "id": 1,
+    "name": "Zote The Mighty",
+    "strength": 9001
+  },
+  {
+    "id": 2,
+    "name": "Grimm",
+    "strength": 10
+  }
+]

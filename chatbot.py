@@ -6,6 +6,8 @@ import requests
 import logging
 from irc.client import Event, ServerConnection
 
+from battle import Battle
+
 
 class TwitchBot(irc.bot.SingleServerIRCBot):
 
@@ -16,6 +18,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
 
         # command specific values
         self.count = 0
+        self.battle = Battle()
 
         # Get the channel id, we will need this for v5 API calls
         url = 'https://api.twitch.tv/kraken/users?login=' + channel
@@ -121,6 +124,10 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
                 message = ("Well done %s, you are subscribed. Keep being subbed to increase your power even more!" % name)
             else:
                 message = ("I see %s. You lack in power. You should subscribe to @VysuaLsTV to fix this." % name)
+            c.privmsg(self.channel, message)
+        elif cmd == "battle":
+            message = self.battle.fight_random_boss(10)
+            # message = self.battle.fight_boss(10, 2)
             c.privmsg(self.channel, message)
 
     def special_command(self, e: Event, cmd: str):
