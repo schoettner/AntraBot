@@ -48,10 +48,7 @@ class Player(object):
                       'strength': self.default_strength,
                       'geo': self.default_geo,
                       'upgrades': []}
-        new_player['upgrades'].append({
-            'item': 'nail',
-            'strength': 1,
-        })
+        new_player['upgrades'].append(1)
 
         # todo this is terrible! read and overwrite every time. fix this later
         # read all players

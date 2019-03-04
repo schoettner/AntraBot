@@ -64,6 +64,7 @@ class Boss(object):
     def get_all_bosses(self):
         """
         get all bosses
+
         :return: list of bosses, number of bosses available
         """
         with open(self.bosses_file) as f:

@@ -13,6 +13,7 @@ class Upgrade(object):
     def get_upgrade(self, upgrade_id: int = 0):
         """
         load a specific upgrade from the list
+
         :param upgrade_id: the identifier of the upgrade
         :return: returns the dict of the upgrade or None if the identifier was not found
         """

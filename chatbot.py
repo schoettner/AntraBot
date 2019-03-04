@@ -36,6 +36,15 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port, 'oauth:'+token)], username, username)
 
     def on_welcome(self, c: ServerConnection, e: Event):
+        """
+        join the channel in which the bot should operate
+        check the 'Twitch IRC Capabilities' section at https://dev.twitch.tv/docs/irc/guide/
+        for more details on this
+
+        :param c: server connection
+        :param e: event
+        :return: None
+        """
         print('Joining ' + self.channel)
 
         # You must request specific capabilities before you can use them
@@ -47,6 +56,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
     def on_pubmsg(self, c: ServerConnection, e: Event):
         """
         this is called every time a message is received. keep this signature due to the icr interface
+
         :param c: the server connection. can be used to transfer an message
         :param e: the event. it contains sender, message, badges etc
         :return: None
@@ -71,6 +81,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
     def get_command_permission(self, badges: dict):
         """
         checks if the badge list contains either broadcaster, moderator or vip
+
         :param badges: the whole bade list
         :return: Boolean if one of the demanded badges is given
         """
@@ -87,6 +98,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
     def has_badge(self, badges: dict, badge_name: str = 'moderator'):
         """
         check if the badge list contains a specific badge
+
         :param badges: the whole badge list
         :param badge_name: the badge you are looking for
         :return: if the badge is in the list
@@ -100,6 +112,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         """
         commands that should be available for everyone. no vip/mod/broadcaster needed.
         the message for the command is directly printed to twitch chat
+
         :param e: the chat event. containing arguments and tags
         :param cmd: the command as string
         :return: None
@@ -147,6 +160,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         """
         execute a command. the permissions are not checked in here. only moderator etc should be allowed to use those commands.
         the message for the command is directly printed to twitch chat
+
         :param e: the chat event. containing arguments and tags
         :param cmd: the command as string
         :return: None
@@ -185,6 +199,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
     def read_random_line_from_file(self, file_name: str):
         """
         read quote lines from a text file. The file is loaded every time to allow dynamic changes without a bot restart
+
         :param file_name: name of the textfile with the quotes. has to be in the same folder
         :return: None
         """
