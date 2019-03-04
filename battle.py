@@ -36,6 +36,7 @@ class Battle(object):
         boss_name, boss_strength = self.get_boss(boss_id)
         strength = player.get_strength()
         actual_strength = randint(int(self.lower_border * strength), int(self.upper_border * strength))
+        print("player str: %i, boss str: %i" % (actual_strength, boss_strength))
         if actual_strength > boss_strength:
             return '%s was defeated. Glory to the mighty warrior. ' % boss_name
         else:

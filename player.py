@@ -25,7 +25,8 @@ class Player(object):
 
     def load_player(self):
         """
-         load a player from a database or file storage
+        load a player from a database or file storage
+
         :return: the player profile as dict or None if the player does not exist yet
         """
         player_list = self.load_all_players()
@@ -40,6 +41,7 @@ class Player(object):
     def create_player(self):
         """
         create the new player in your storage
+
         :return: the new player profile
         """
         new_player = {'name': self.name,
@@ -66,12 +68,11 @@ class Player(object):
 
     def buy_upgrade(self, upgrade_id: int):
         """
-        give the player an additional upgrade. if the player has the upgrade already, ignore it
+        give the player an additional upgrade. check if the player can get the upgrade before
+
         :param upgrade_id: the id of the upgrade the player wants to buy
-        :return:
+        :return: the result message of the purchase as string
         """
-        # todo overwrite the player profile with the new upgrades. add any validation if the player can use the item?
-        # e.g. can use shade soul without having vengeful spirit? and do i overwrite spirit or add shade soul on top?
 
         # avoid that people buy start upgrade again
         if upgrade_id == 0:
@@ -95,11 +96,17 @@ class Player(object):
             return 'You do not own the required item to do the upgrade. Or you already own a better version.'
 
         # time to buy the upgrade
-        raise NotImplementedError('purchase of items is not yet supported')
+        self.profile['geo'] -= upgrade['costs']  # reduce your geo count
+        self.profile['upgrades'].append(upgrade['id'])
+        self.profile['upgrades'].remove(upgrade['requires'])
+
+        # todo save the new profile
+        return 'Congratulations, you purchased an upgrade! Now get into some bosses with your new obtained power!'
 
     def get_strength(self):
         """
         get the total strength of a player
+
         :return: the players base strength and the strength of all the upgrades
         """
         upgrade_strength = 0
@@ -110,6 +117,15 @@ class Player(object):
         return total_strength
 
     def load_all_players(self):
+        """
+        load all players from the database. a player has the following attributes
+        name - str: twitch display name
+        strength - int: base strength of the player without upgrades
+        geo - int: currency that allows the player to buy items
+        upgrades - list[int]: list of owned upgrades
+
+        :return: list of all players
+        """
         with open(self.player_list, 'r') as players_file:
             players = json.load(players_file)
         return players
