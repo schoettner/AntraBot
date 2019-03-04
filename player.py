@@ -1,6 +1,7 @@
 import json
 import logging
 
+
 class Player(object):
     """control the player who is able to battle"""
 
@@ -8,14 +9,17 @@ class Player(object):
         self.player_list = 'players.json'
         self.default_strength = 10
         self.name = name
-        print("player %s is ready to go" % name)
+        logging.info("player %s is ready to go" % name)
         profile = self.load_player()
         if profile is None:
             profile = self.create_player()
         self.profile = profile
 
     def load_player(self):
-        """ load a player from a database or file storage"""
+        """
+         load a player from a database or file storage
+        :return: the player profile as dict or None if the player does not exist yet
+        """
         with open(self.player_list) as f:
             player_list = json.load(f)
 
@@ -27,7 +31,10 @@ class Player(object):
         return None
 
     def create_player(self):
-        """ create the new player in your storage"""
+        """
+        create the new player in your storage
+        :return: the new player profile
+        """
         data = {'name': self.name,
                 'strength': self.default_strength,
                 'upgrades': []}
@@ -50,8 +57,26 @@ class Player(object):
 
         return data
 
+    def give_upgrade(self, upgrade: dict):
+        """
+        give the player an additional upgrade. if the player has the upgrade already, ignore it
+        :param upgrade:
+        :return:
+        """
+        # todo overwrite the player profile with the new upgrades. add any validation if the player can use the item?
+        # e.g. can use shade soul without having vengeful spirit? and do i overwrite spirit or add shade soul on top?
+
+        return None
+
 
     def get_strength(self):
-        """ get the battle strength of the player"""
-        return self.profile['strength']
+        """
+        get the total strength of a player
+        :return: the players base strength and the strength of all the upgrades
+        """
+        upgrade_strength = 0
+        for upgrade in self.profile['upgrades']:
+            upgrade_strength += upgrade['strength']
+        total_strength = self.profile['strength'] + upgrade_strength
+        return total_strength
 
