@@ -1,39 +1,40 @@
 import json
 from random import randint
 
+from player import Player
+
 
 class Battle(object):
     """
     allow a twitch chat member to fight hollow knight boss enemies
     """
 
-    def __init__(self, bosses: str = 'bosses.json'):
+    def __init__(self, bosses: str = 'config/bosses.json'):
         self.bosses_file = bosses
         self.lower_border = 0.9  # multiplier on how low your strength can randomize
         self.upper_border = 1.1  # multiplier on how high your strength can randomize
 
-    def fight_random_boss(self, strength: int):
+    def fight_random_boss(self, player: Player):
         """
         fight a random boss from the list
 
-        :param strength: the strength of the player
+        :param player: the player that fights the boss
         :return: the result message of the fight
         """
-        # raise NotImplementedError('not yet implemented because i dont know how many bosses there are yet')
         max_index = self.get_boss_count() - 1  # zero based index
         boss_id = randint(0, max_index)
-        return self.fight_boss(strength, boss_id)
+        return self.fight_boss(player, boss_id)
 
-    def fight_boss(self, strength: int, boss_id: int):
+    def fight_boss(self, player: Player, boss_id: int):
         """
         fight a specific boss in the list
 
-        :param strength: the strength of the player
+        :param player: the player that fights the boss
         :param boss_id: the result message of the fight
         :return:
         """
         boss_name, boss_strength = self.get_boss(boss_id)
-
+        strength = player.get_strength()
         actual_strength = randint(int(self.lower_border * strength), int(self.upper_border * strength))
         if actual_strength > boss_strength:
             return '%s was defeated. Glory to the mighty warrior. ' % boss_name

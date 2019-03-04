@@ -1,0 +1,51 @@
+[
+  {
+    "id": 0,
+    "name": "Old Nail",
+    "strength": 5,
+    "costs": 0,
+    "requires": null
+  },
+  {
+    "id": 1,
+    "name": "Sharpened Nail",
+    "strength": 9,
+    "costs": 250,
+    "requires": 0
+  },
+  {
+    "id": 2,
+    "name": "Channelled Nail",
+    "strength": 13,
+    "costs": 800,
+    "requires": 1
+  },
+  {
+    "id": 3,
+    "name": "Coiled Nail",
+    "strength": 17,
+    "costs": 2000,
+    "requires": 2
+  },
+  {
+    "id": 4,
+    "name": "Pure Nail",
+    "strength": 21,
+    "costs": 4000,
+    "requires": 3
+  },
+  {
+    "id": 5,
+    "name": "Vengeful Spirit",
+    "strength": 15,
+    "costs": 1500,
+    "requires": null
+  },
+  {
+    "id": 6,
+    "name": "Shade Soul",
+    "strength": 30,
+    "costs": 6000,
+    "requires": 5
+  }
+]

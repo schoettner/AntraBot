@@ -18,6 +18,8 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         self.channel = '#' + channel
 
         # command specific values
+        self.quotation_file = 'config/quotation.txt'
+        self.boss_file = 'config/bosses.txt'
         self.count = 0
         self.battle = Battle()
 
@@ -33,7 +35,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         print('Connecting to ' + server + ' on port ' + str(port) + '...')
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port, 'oauth:'+token)], username, username)
 
-    def on_welcome(self, c : ServerConnection, e: Event):
+    def on_welcome(self, c: ServerConnection, e: Event):
         print('Joining ' + self.channel)
 
         # You must request specific capabilities before you can use them
@@ -42,7 +44,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         c.cap('REQ', ':twitch.tv/commands')
         c.join(self.channel)
 
-    def on_pubmsg(self, c : ServerConnection, e: Event):
+    def on_pubmsg(self, c: ServerConnection, e: Event):
         """
         this is called every time a message is received. keep this signature due to the icr interface
         :param c: the server connection. can be used to transfer an message
@@ -95,6 +97,13 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         return badge_name in badges_value
 
     def public_command(self, e: Event, cmd: str):
+        """
+        commands that should be available for everyone. no vip/mod/broadcaster needed.
+        the message for the command is directly printed to twitch chat
+        :param e: the chat event. containing arguments and tags
+        :param cmd: the command as string
+        :return: None
+        """
         c = self.connection
 
         # general commands
@@ -107,10 +116,10 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             c.privmsg(self.channel, message)
         elif cmd == "boss":
             # todo replace with json file. no need to maintain two separate boss files
-            message = self.read_random_line_from_file('bosses.txt')
+            message = self.read_random_line_from_file(self.boss_file)
             c.privmsg(self.channel, message)
         elif cmd == "vysquote":
-            message = self.read_random_line_from_file()
+            message = self.read_random_line_from_file(self.quotation_file)
             logging.debug("The printed quote will be: %s" % message)
             c.privmsg(self.channel, message)
         elif cmd == "purple":
@@ -130,16 +139,15 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         elif cmd == "battle":
             name = e.tags[2]['value']  # get the display name
             player = Player(name)
-            strength = player.get_strength()
-            message = self.battle.fight_random_boss(strength)
+            message = self.battle.fight_random_boss(player)
             # message = self.battle.fight_boss(10, 2)
             c.privmsg(self.channel, message)
 
     def special_command(self, e: Event, cmd: str):
         """
-        execute a command. the permissions are not checked in here.
-        only moderator etc should be allowed to use those commands.
-        :param e: the event if required for any more details of the command
+        execute a command. the permissions are not checked in here. only moderator etc should be allowed to use those commands.
+        the message for the command is directly printed to twitch chat
+        :param e: the chat event. containing arguments and tags
         :param cmd: the command as string
         :return: None
         """
@@ -174,7 +182,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             message = "This is a debug command for the dark lord himself. Do not worry about it."
             c.privmsg(self.channel, message)
 
-    def read_random_line_from_file(self, file_name: str = 'quotation.txt'):
+    def read_random_line_from_file(self, file_name: str):
         """
         read quote lines from a text file. The file is loaded every time to allow dynamic changes without a bot restart
         :param file_name: name of the textfile with the quotes. has to be in the same folder
