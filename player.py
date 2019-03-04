@@ -73,9 +73,13 @@ class Player(object):
         # todo overwrite the player profile with the new upgrades. add any validation if the player can use the item?
         # e.g. can use shade soul without having vengeful spirit? and do i overwrite spirit or add shade soul on top?
 
-        # avoid that people downgrade
+        # avoid that people buy start upgrade again
         if upgrade_id == 0:
             return 'You can not buy this upgrade. This thing is way to old for an experienced warrior like yourself.'
+
+        # check if the player owns the upgrade already
+        if upgrade_id in self.profile['upgrades']:
+            return 'You already own this upgrade. You can not purchase it again.'
 
         # get the upgrade
         upgrade = self.upgrade_loader.get_upgrade(upgrade_id)
@@ -88,8 +92,7 @@ class Player(object):
 
         # check if the player owns the required item
         if not self.upgrade_loader.meets_requirements(upgrade, self.profile['upgrades']):
-            return 'You do not own the required item to do the upgrade. ' \
-                   'Check the upgrade list and buy the required upgrade fist.'
+            return 'You do not own the required item to do the upgrade. Or you already own a better version.'
 
         # time to buy the upgrade
         raise NotImplementedError('purchase of items is not yet supported')
@@ -114,6 +117,6 @@ class Player(object):
 
 if __name__ == "__main__":
     player = Player("antrazith")
-    # msg = player.buy_upgrade(7)
-    msg = player.get_strength()
+    msg = player.buy_upgrade(4)
+    # msg = player.get_strength()
     print(msg)

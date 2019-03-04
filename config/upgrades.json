@@ -47,5 +47,33 @@
     "strength": 30,
     "costs": 6000,
     "requires": 5
+  },
+  {
+    "id": 7,
+    "name": "Desolate Dive",
+    "strength": 35,
+    "costs": 7000,
+    "requires": null
+  },
+  {
+    "id": 8,
+    "name": "Descending Darkl",
+    "strength": 60,
+    "costs": 12000,
+    "requires": 7
+  },
+  {
+    "id": 9,
+    "name": "Howling Wraiths",
+    "strength": 30,
+    "costs": 6000,
+    "requires": null
+  },
+  {
+    "id": 10,
+    "name": "Abyss Shriek",
+    "strength": 80,
+    "costs": 15000,
+    "requires": 9
   }
 ]

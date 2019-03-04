@@ -58,22 +58,22 @@ class Upgrade(object):
     def meets_requirements(self, desired_upgrade: dict, owned_upgrades: list):
         """
         This method allows you to verify if someone meets the requirements to purchase an upgrade.
+        return false if the item does not have a requirement and the next id is already owned
+        This is because the next id is the next version of the desired_upgrade and you want avoid downgrading
 
         :param desired_upgrade: the upgrade you want to acquire
         :param owned_upgrades: the list of owned upgrades
-        :return: Boolean if the required upgrade is already purchased
+        :return: Boolean if the player meets the requirements to by the item
         """
 
-        # todo how to check if the user already has an hire upgrade?
-        #  e.g. prevent vengeful spirit if shade soul is already available?
-
         required_upgrade = desired_upgrade['requires']
-        if required_upgrade is None:
+        next_upgrade = desired_upgrade['id'] + 1
+
+        # if nothing is required and you dont have the next upgrade already
+        if required_upgrade is None and next_upgrade not in owned_upgrades:
             return True
-        for upgrade_id in owned_upgrades:
-            if upgrade_id == required_upgrade:
-                return True
-        return False
+
+        return required_upgrade in owned_upgrades
 
 
 if __name__ == "__main__":
