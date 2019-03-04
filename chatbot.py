@@ -112,7 +112,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             message = "Dont listen to StreamElements. The knight is purple due to black magic."
             c.privmsg(self.channel, message)
         elif cmd == "zote":
-            message = "He who must not be named. Just pass by and let Vengefly King let do its job."
+            message = "He who must not be named. Just pass by and let Vengefly King do its job."
             c.privmsg(self.channel, message)
         elif cmd == "sub":
             sub = e.tags[8]['value']  # is subbed this is 1 (as str)
