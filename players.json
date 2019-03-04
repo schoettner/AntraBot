@@ -1,12 +1,1 @@
-[
-  {
-    "name": "antrazith",
-    "strength": 9000,
-    "upgrades": [
-      {
-        "item": "pure nail",
-        "strength": 500
-      }
-    ]
-  }
-]
+[{"strength": 9001, "name": "antrazith", "upgrades": [{"strength": 500, "item": "pure nail"}]}]

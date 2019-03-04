@@ -64,7 +64,6 @@ class Battle(object):
         with open(self.bosses_file) as f:
             boss_list = json.load(f)
         boss_count = len(boss_list)
-        print(boss_count)
         return boss_count
 
 

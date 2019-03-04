@@ -106,7 +106,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             print(message)
             c.privmsg(self.channel, message)
         elif cmd == "boss":
-            # todo replace
+            # todo replace with json file. no need to maintain two separate boss files
             message = self.read_random_line_from_file('bosses.txt')
             c.privmsg(self.channel, message)
         elif cmd == "vysquote":
