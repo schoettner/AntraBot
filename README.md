@@ -35,8 +35,11 @@ python3 chatbot.py AntraBot jycvlymxj2qacjlw08c1t5ud7vqgif <token> antrazith
 |info|solved|
 |-----------|----------------------------------------------------------------|
 | messages sent from the irc client do sometimes not appear in twitch chat | no |
-|missing wiki at https://www.fandom.com/|no|
+| player storage is not optimal | no |
+| players can not yet purchase items with a command | no |
 
 ### References
 [Example-Code from Amazon](https://github.com/twitchdev/chat-samples/tree/master/python)
+[AntraBot Wiki](https://www.fandom.com/)
+[Twitch IRC Guide](https://dev.twitch.tv/docs/irc/guide/)
 
