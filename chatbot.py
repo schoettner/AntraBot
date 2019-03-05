@@ -209,6 +209,9 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         message = lines[rand]
         return message[:-1]  # remove the new line character. throws error in irc client
 
+    def get_viewers(self):
+        """https://tmi.twitch.tv/group/user/vysualstv/chatters"""
+        raise NotImplementedError
 
 def main():
     if len(sys.argv) != 5:
