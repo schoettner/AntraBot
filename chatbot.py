@@ -6,8 +6,10 @@ import requests
 import logging
 from irc.client import Event, ServerConnection
 
+from database import PlayerDatabase
 from boss import Boss
 from player import Player
+from upgrade import Upgrade
 
 
 class TwitchBot(irc.bot.SingleServerIRCBot):
@@ -22,6 +24,8 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         self.boss_file = 'config/bosses.txt'
         self.count = 0
         self.battle = Boss()
+        self.player_database = PlayerDatabase()
+        self.upgrade_loader = Upgrade()
 
         # Get the channel id, we will need this for v5 API calls
         url = 'https://api.twitch.tv/kraken/users?login=' + channel
@@ -142,18 +146,23 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             message = "He who must not be named. Just pass by and let Vengefly King do its job."
             c.privmsg(self.channel, message)
         elif cmd == "sub":
-            sub = e.tags[8]['value']  # is subbed this is 1 (as str)
-            name = e.tags[2]['value']  # get the display name
+            name = self.get_twitch_name(e)
+            sub = self.is_sub(e)
             if sub == "1":
                 message = ("Well done %s, you are subscribed. Keep being subbed to increase your power even more!" % name)
             else:
                 message = ("I see %s. You lack in power. You should subscribe to @VysuaLsTV to fix this." % name)
             c.privmsg(self.channel, message)
         elif cmd == "battle":
-            name = e.tags[2]['value']  # get the display name
-            player = Player(name)
+            name = self.get_twitch_name(e)
+            player = self.get_player(name)
             message = self.battle.fight_random_boss(player)
             # message = self.battle.fight_boss(10, 2)
+            c.privmsg(self.channel, message)
+        elif cmd == "buy":
+            name = self.get_twitch_name(e)
+            player = self.get_player(name)
+            message = player.buy_upgrade(2)  # upgrade your nail
             c.privmsg(self.channel, message)
 
     def special_command(self, e: Event, cmd: str):
@@ -196,11 +205,22 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             message = "This is a debug command for the dark lord himself. Do not worry about it."
             c.privmsg(self.channel, message)
 
+    def get_twitch_name(self, e: Event):
+        return e.tags[2]['value']  # get the display name
+
+    def is_sub(self, e: Event):
+        return e.tags[8]['value']  # is subbed this is 1 (as str)
+
+    def get_player(self, name: str):
+        player_profile = self.player_database.get_or_create_player(name)
+        player = Player(profile=player_profile, upgrade_loader=self.upgrade_loader, player_database=self.player_database)
+        return player
+
     def read_random_line_from_file(self, file_name: str):
         """
         read quote lines from a text file. The file is loaded every time to allow dynamic changes without a bot restart
 
-        :param file_name: name of the textfile with the quotes. has to be in the same folder
+        :param file_name: name of the text-file with the quotes. has to be in the same folder
         :return: None
         """
         file = open(file_name, 'r')

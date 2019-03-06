@@ -1,67 +1,14 @@
-import json
-import logging
-
+from database import PlayerDatabase
 from upgrade import Upgrade
 
 
 class Player(object):
     """control the player who is able to battle"""
 
-    def __init__(self, name: str):
-        logging.info("player %s is ready to go" % name)
-
-        # default values
-        self.player_list = 'config/players.json'
-        self.default_strength = 10
-        self.default_geo = 1
-
-        # parameter
-        self.name = name
-        self.upgrade_loader = Upgrade()
-        profile = self.load_player()
-        if profile is None:
-            profile = self.create_player()
+    def __init__(self, profile: dict, upgrade_loader: Upgrade, player_database: PlayerDatabase):
         self.profile = profile
-
-    def load_player(self):
-        """
-        load a player from a database or file storage
-
-        :return: the player profile as dict or None if the player does not exist yet
-        """
-        player_list = self.load_all_players()
-
-        for entry in player_list:
-            if self.name == entry['name']:
-                logging.debug('player is already in database')
-                return entry
-        logging.debug('player is not yet in database')
-        return None
-
-    def create_player(self):
-        """
-        create the new player in your storage
-
-        :return: the new player profile
-        """
-        new_player = {'name': self.name,
-                      'strength': self.default_strength,
-                      'geo': self.default_geo,
-                      'upgrades': []}
-        new_player['upgrades'].append(1)
-
-        # todo this is terrible! read and overwrite every time. fix this later
-        # read all players
-        players = self.load_all_players()
-
-        # add new player
-        players.append(new_player)
-
-        # write new player ist
-        with open(self.player_list, 'w') as players_file:
-            json.dump(players, players_file)
-
-        return new_player
+        self.player_database = player_database
+        self.upgrade_loader = upgrade_loader
 
     def buy_upgrade(self, upgrade_id: int):
         """
@@ -97,7 +44,10 @@ class Player(object):
         self.profile['upgrades'].append(upgrade['id'])
         self.profile['upgrades'].remove(upgrade['requires'])
 
-        # todo save the new profile
+        # save new upgrades and geo
+        self.player_database.update_player_geo(player_name=self.profile['name'], player_geo=self.profile['geo'])
+        self.player_database.update_player_upgrades(player_name=self.profile['name'], player_upgrades=self.profile['upgrades'])
+
         return 'Congratulations, you purchased an upgrade! Now get into some bosses with your new obtained power!'
 
     def get_strength(self):
@@ -113,27 +63,11 @@ class Player(object):
         total_strength = self.profile['strength'] + upgrade_strength
         return total_strength
 
-    def load_all_players(self):
+    def grant_geo(self, geo: int = 10):
         """
-        load all players from the database. a player has the following attributes
-        name - str: twitch display name
-        strength - int: base strength of the player without upgrades
-        geo - int: currency that allows the player to buy items
-        upgrades - list[int]: list of owned upgrades
-
-        :return: list of all players
+        give the player geo for interaction or time in chat
+        :param geo: amount of geo you want to grant
+        :return:
         """
-        with open(self.player_list, 'r') as players_file:
-            players = json.load(players_file)
-        return players
-
-    def save_player_upgrade(self):
-        # save the players progress so its the same after the next restart
-        return None
-
-
-if __name__ == "__main__":
-    player = Player("antrazith")
-    msg = player.buy_upgrade(4)
-    # msg = player.get_strength()
-    print(msg)
+        self.profile['geo'] += geo
+        self.player_database.update_player_geo(player_name=self.profile['name'], player_geo=self.profile['geo'])
