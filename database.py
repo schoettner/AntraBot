@@ -40,11 +40,13 @@ class PlayerDatabase(object):
     def get_or_create_player(self, player_name: str):
         """
         check if the player is found. if not, create a new player player with default values
+        make sure to convert the player name to lower case. this is mandatory because the twitch REST api returns
+        all player names in lower case
 
         :param player_name: the twitch display name of the player
         :return: the dict of the player
         """
-        player = self.get_player_by_name(player_name)
+        player = self.get_player_by_name(player_name.lower())
         if player is None:
             new_player = self.get_default_player(player_name)
             self.add_player(new_player)
@@ -58,7 +60,7 @@ class PlayerDatabase(object):
         :param player_name:
         :return:
         """
-        return {"strength": 10, "name": player_name, "geo": 1, "upgrades": [1]}
+        return {"strength": 10, "name": player_name, "geo": 1, "upgrades": [0]}
 
 
     ##########################################################################################

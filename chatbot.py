@@ -18,6 +18,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         self.client_id = client_id
         self.token = token
         self.channel = '#' + channel
+        self.channel_plain = channel
 
         # command specific values
         self.quotation_file = 'config/quotation.txt'
@@ -193,6 +194,15 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             message = "count is at %s" % self.count
             c.privmsg(self.channel, message)
 
+        # give geo to the ppl!
+        elif cmd == "geo":
+            viewers = self.get_viewers()
+            for viewer in viewers:
+                player = self.get_player(viewer)
+                player.grant_geo(geo=10)
+            message = 'All viewers in chat have been blessed by the gods. You all gained 10 Geo. Use !buy to get yourself an upgrade!'
+            c.privmsg(self.channel, message)
+
         # special commands
         elif cmd == "modcommands":
             message = "Moderators use the public commands and: !counter, !count, !countdown, !countreset, !welcome, !antra"
@@ -230,8 +240,14 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         return message[:-1]  # remove the new line character. throws error in irc client
 
     def get_viewers(self):
-        """https://tmi.twitch.tv/group/user/vysualstv/chatters"""
-        raise NotImplementedError
+        """
+        use the switch REST API to get all current viewers of a channel
+
+        :return: list of all viewers in the channel
+        """
+        url = 'https://tmi.twitch.tv/group/user/%s/chatters' % self.channel_plain
+        channel_viewers = requests.get(url).json()['chatters']['viewers']  # not sure yet if mod/admin are separate or also in here
+        return channel_viewers
 
 def main():
     if len(sys.argv) != 5:
