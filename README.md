@@ -6,6 +6,7 @@ by example.The bot should perform fun tasks that should be helpful.
 The bot is written with python 3.5
 ```sh
 $ pip3 install irc
+$ pip3 install pymongo
 ```
 I used **virtualenv** to manage the pyhton environment
 
