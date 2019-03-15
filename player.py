@@ -57,7 +57,7 @@ class Player(object):
         :return: the players base strength and the strength of all the upgrades
         """
         upgrade_strength = 0
-        upgrade_list = self.upgrade_loader.get_upgrades_by_id(self.profile['upgrades'])
+        upgrade_list = self.upgrade_loader.get_upgrades_by_ids(self.profile['upgrades'])
         for upgrade in upgrade_list:
             upgrade_strength += upgrade['strength']
         total_strength = self.profile['strength'] + upgrade_strength

@@ -74,6 +74,6 @@
     "name": "Abyss Shriek",
     "strength": 80,
     "costs": 15000,
-    "requires": 7
+    "requires": 9
   }
 ]

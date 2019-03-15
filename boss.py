@@ -39,7 +39,7 @@ class Boss(object):
         actual_strength = randint(int(self.lower_border * strength), int(self.upper_border * strength))
         print("player str: %i, boss str: %i" % (actual_strength, boss_strength))
         if actual_strength > boss_strength:
-            return '%s was defeated. Glory to the mighty warrior. ' % boss_name
+            return '%s was defeated. Glory to the mighty warrior.' % boss_name
         else:
             return '%s was victorious. You disappear into the void.' % boss_name
 

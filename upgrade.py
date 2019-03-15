@@ -28,7 +28,7 @@ class Upgrade(object):
             logging.debug('upgrade not found in database')
         return None
 
-    def get_upgrades_by_id(self, upgrade_ids: list):
+    def get_upgrades_by_ids(self, upgrade_ids: list):
         """
         load multiple upgrades at once
 
