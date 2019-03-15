@@ -4,6 +4,8 @@ from random import randint
 import irc.bot
 import requests
 import logging
+
+import schedule
 from irc.client import Event, ServerConnection
 
 from database import PlayerDatabase
@@ -161,10 +163,16 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             # message = self.battle.fight_boss(10, 2)
             c.privmsg(self.channel, message)
         elif cmd == "buy":
-            name = self.get_twitch_name(e)
-            player = self.get_player(name)
-            message = player.buy_upgrade(2)  # upgrade your nail
-            c.privmsg(self.channel, message)
+            # todo get the id as parameter instead of fixed 2
+            received_id = e.arguments[0][5:]  # get message and remove first 5 chars '!buy '
+            if str(received_id).isnumeric():  # check if the given id is valid
+                name = self.get_twitch_name(e)
+                player = self.get_player(name)
+                upgrade_id = int(received_id)  # need to cast the str i.e. to int
+                message = player.buy_upgrade(upgrade_id)  # upgrade your nail
+                c.privmsg(self.channel, message)
+            else:
+                c.privmsg(self.channel, "You entered an invalid number. Can not buy the item")
 
     def special_command(self, e: Event, cmd: str):
         """
@@ -196,12 +204,11 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
 
         # give geo to the ppl!
         elif cmd == "geo":
-            viewers = self.get_viewers()
-            for viewer in viewers:
-                player = self.get_player(viewer)
-                player.grant_geo(geo=10)
-            message = 'All viewers in chat have been blessed by the gods. You all gained 10 Geo. Use !buy to get yourself an upgrade!'
-            c.privmsg(self.channel, message)
+            self.grant_geo()
+
+        elif cmd == "timer":
+            # todo this does crash at this point. fix later
+            schedule.every(10).seconds.do(self.grant_geo())
 
         # special commands
         elif cmd == "modcommands":
@@ -214,6 +221,15 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             print(e)
             message = "This is a debug command for the dark lord himself. Do not worry about it."
             c.privmsg(self.channel, message)
+
+    def grant_geo(self):
+        c = self.connection
+        viewers = self.get_viewers()
+        for viewer in viewers:
+            player = self.get_player(viewer)
+            player.grant_geo(geo=10)
+        message = 'All viewers in chat have been blessed by the gods. You all gained 10 Geo. Use !buy to get yourself an upgrade!'
+        c.privmsg(self.channel, message)
 
     def get_twitch_name(self, e: Event):
         return e.tags[2]['value']  # get the display name
