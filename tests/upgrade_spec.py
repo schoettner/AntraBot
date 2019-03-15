@@ -3,9 +3,6 @@ from upgrade import Upgrade
 
 class SpecUpgrade:
 
-    # def test_dummy_failure(self):
-    #     assert False
-
     def test_full_upgrade_list(self):
         upgrades = self.given_default_upgrades()
         upgrade_list, upgrade_count = upgrades.get_all_upgrades()

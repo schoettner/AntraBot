@@ -53,7 +53,8 @@ class PlayerDatabase(object):
             player = self.get_player_by_name(player_name)
         return player
 
-    def get_default_player(self, player_name: str):
+    @staticmethod
+    def get_default_player(player_name: str):
         """
         create a player that has only the base strenght, 1 geo and the old nail
 
