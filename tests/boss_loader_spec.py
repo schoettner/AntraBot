@@ -2,7 +2,7 @@ from util.boss_loader import BossLoader
 from util.player import Player
 
 
-class SpecBoss:
+class SpecBossLoader:
 
     def test_all_bosses(self):
         bosses = self.given_default_bosses()
@@ -20,8 +20,6 @@ class SpecBoss:
         boss_name, boss_strength = bosses.get_boss(boss_id=45)
         assert boss_name == 'Absolute Radiance'
         assert boss_strength == 191
-
-
 
     @staticmethod
     def given_default_bosses():

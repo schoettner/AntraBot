@@ -132,7 +132,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             message = "AntraBot is up and running. Getting more powerful"
             c.privmsg(self.channel, message)
         elif cmd == "antrabot":
-            message = "The public commands are: !bot, !vysquote, !sub, !boss, !zote, !battle"
+            message = "The public commands are: !bot, !vysquote, !sub, !boss, !zote, !random, !buy <upgrade_id>, !fight <boss_id>"
             print(message)
             c.privmsg(self.channel, message)
         elif cmd == "boss":
@@ -157,23 +157,31 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             else:
                 message = ("I see %s. You lack in power. You should subscribe to @VysuaLsTV to fix this." % name)
             c.privmsg(self.channel, message)
-        elif cmd == "battle":
+        elif cmd == "random":
             name = self.get_twitch_name(e)
             player = self.get_player(name)
             message = self.battle_manager.fight_random_boss(player)
-            # message = self.battle.fight_boss(10, 2)
+            c.privmsg(self.channel, message)
+        elif cmd == "fight":
+            received_id = e.arguments[0][7:]  # get message and remove first 7 chars '!fight '
+            if str(received_id).isnumeric():  # check if the given id is valid
+                name = self.get_twitch_name(e)
+                player = self.get_player(name)
+                boss_id = int(received_id)
+                message = self.battle_manager.fight_boss(player, boss_id)
+            else:
+                message = 'You entered an invalid number. Can not fight that boss'
             c.privmsg(self.channel, message)
         elif cmd == "buy":
-            # todo get the id as parameter instead of fixed 2
             received_id = e.arguments[0][5:]  # get message and remove first 5 chars '!buy '
             if str(received_id).isnumeric():  # check if the given id is valid
                 name = self.get_twitch_name(e)
                 player = self.get_player(name)
                 upgrade_id = int(received_id)  # need to cast the str i.e. to int
                 message = player.buy_upgrade(upgrade_id)  # upgrade your nail
-                c.privmsg(self.channel, message)
             else:
-                c.privmsg(self.channel, "You entered an invalid number. Can not buy the item")
+                message = 'You entered an invalid number. Can not buy the item.'
+            c.privmsg(self.channel, message)
 
     def special_command(self, e: Event, cmd: str):
         """
@@ -232,10 +240,12 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         message = 'All viewers in chat have been blessed by the gods. You all gained 10 Geo. Use !buy to get yourself an upgrade!'
         c.privmsg(self.channel, message)
 
-    def get_twitch_name(self, e: Event):
+    @staticmethod
+    def get_twitch_name(e: Event):
         return e.tags[2]['value']  # get the display name
 
-    def is_sub(self, e: Event):
+    @staticmethod
+    def is_sub(e: Event):
         return e.tags[8]['value']  # is subbed this is 1 (as str)
 
     def get_player(self, name: str):
@@ -243,7 +253,8 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         player = Player(profile=player_profile, upgrade_loader=self.upgrade_loader, player_database=self.player_database)
         return player
 
-    def read_random_line_from_file(self, file_name: str):
+    @staticmethod
+    def read_random_line_from_file(file_name: str):
         """
         read quote lines from a text file. The file is loaded every time to allow dynamic changes without a bot restart
 

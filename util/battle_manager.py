@@ -28,6 +28,11 @@ class BattleManager(object):
         :param boss_id: the result message of the fight
         :return:
         """
+
+        # check if the id is valid?
+        _, boss_count = self.boss_loader.get_all_bosses()
+        if boss_id < 0 or boss_id >= boss_count:
+            return 'The boss id you try to fight is not valid.'
         boss_name, boss_strength = self.boss_loader.get_boss(boss_id)
         strength = player.get_strength()
         actual_strength = randint(int(self.lower_border * strength), int(self.upper_border * strength))
