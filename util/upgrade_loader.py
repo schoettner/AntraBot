@@ -2,7 +2,7 @@ import json
 import logging
 
 
-class Upgrade(object):
+class UpgradeLoader(object):
     """
     handle all battle upgrades for the player.
     """
@@ -79,6 +79,6 @@ class Upgrade(object):
 
 
 if __name__ == "__main__":
-    upgrade = Upgrade()
+    upgrade = UpgradeLoader()
     msg = upgrade.get_upgrade(10)
     print(msg)

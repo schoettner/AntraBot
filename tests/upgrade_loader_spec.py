@@ -1,4 +1,4 @@
-from upgrade import Upgrade
+from util.upgrade_loader import UpgradeLoader
 
 
 class SpecUpgrade:
@@ -80,4 +80,4 @@ class SpecUpgrade:
 
     @staticmethod
     def given_default_upgrades():
-        return Upgrade()
+        return UpgradeLoader()

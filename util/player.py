@@ -1,11 +1,11 @@
-from database import PlayerDatabase
-from upgrade import Upgrade
+from util.player_database import PlayerDatabase
+from util.upgrade_loader import UpgradeLoader
 
 
 class Player(object):
     """control the player who is able to battle"""
 
-    def __init__(self, profile: dict, upgrade_loader: Upgrade, player_database: PlayerDatabase):
+    def __init__(self, profile: dict, upgrade_loader: UpgradeLoader, player_database: PlayerDatabase):
         self.profile = profile
         self.player_database = player_database
         self.upgrade_loader = upgrade_loader

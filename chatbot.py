@@ -8,10 +8,10 @@ import logging
 import schedule
 from irc.client import Event, ServerConnection
 
-from database import PlayerDatabase
-from boss import Boss
-from player import Player
-from upgrade import Upgrade
+from util.player_database import PlayerDatabase
+from util.boss_loader import BossLoader
+from util.player import Player
+from util.upgrade_loader import UpgradeLoader
 
 
 class TwitchBot(irc.bot.SingleServerIRCBot):
@@ -26,9 +26,9 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         self.quotation_file = 'config/quotation.txt'
         self.boss_file = 'config/bosses.txt'
         self.count = 0
-        self.battle = Boss()
+        self.battle = BossLoader()
         self.player_database = PlayerDatabase()
-        self.upgrade_loader = Upgrade()
+        self.upgrade_loader = UpgradeLoader()
 
         # Get the channel id, we will need this for v5 API calls
         url = 'https://api.twitch.tv/kraken/users?login=' + channel

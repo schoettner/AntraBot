@@ -1,6 +1,6 @@
-from database import PlayerDatabase
-from player import Player
-from upgrade import Upgrade
+from util.player_database import PlayerDatabase
+from util.player import Player
+from util.upgrade_loader import UpgradeLoader
 
 
 class SpecPlayer:
@@ -76,7 +76,7 @@ class SpecPlayer:
 
     @staticmethod
     def given_default_upgrade_loader():
-        loader = UpgradeLoaderMock()
+        loader = UpgradeLoaderLoaderMock()
         return loader
 
 
@@ -91,7 +91,7 @@ class DatabaseMock(PlayerDatabase):
         pass
 
 
-class UpgradeLoaderMock(Upgrade):
+class UpgradeLoaderLoaderMock(UpgradeLoader):
     """
     create a simple to control mock element to handle upgrades in tests
     """

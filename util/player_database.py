@@ -4,18 +4,20 @@ import logging
 
 class PlayerDatabase(object):
 
-    def __init__(self, connection_url: str = 'mongodb://localhost:27017/'):
+    def __init__(self, connection_url: str = 'mongodb://localhost:27017/', database_name: str = 'antrabot'):
         """
         connect to a mongo database. if the database does not exist yet, create it
+        with the name of the database it is possible to create an own for each channel or testing
 
         :param connection_url: the url to the mongoDB. use localhost if running on docker container
+        :param database_name: the name of the database
         """
         self.mongo_client = pymongo.MongoClient(connection_url)
-        self.player_db = self.mongo_client['antrabot']  # create the database
-        self.player_table = self.player_db['player']  # create the document / table
+        self.database = self.mongo_client[database_name]  # create the database
+        self.player_table = self.database['player']  # create the document / table
         logging.debug(self.mongo_client.list_database_names())
 
-    def add_player(self, player: dict):
+    def __add_player(self, player: dict):
         """
         create a new player in the database. before the player is added, check if it already exists
 
@@ -23,10 +25,10 @@ class PlayerDatabase(object):
         :return:
         """
         player_name = player['name']
-        if self.get_player_by_name(player_name) is None:
+        if self.__get_player_by_name(player_name) is None:
             self.player_table.insert_one(player)
 
-    def get_player_by_name(self, name: str):
+    def __get_player_by_name(self, name: str):
         """
         load a player from the database
 
@@ -46,15 +48,41 @@ class PlayerDatabase(object):
         :param player_name: the twitch display name of the player
         :return: the dict of the player
         """
-        player = self.get_player_by_name(player_name.lower())
+        player = self.__get_player_by_name(player_name.lower())
         if player is None:
-            new_player = self.get_default_player(player_name)
-            self.add_player(new_player)
-            player = self.get_player_by_name(player_name)
+            new_player = self.__get_default_player(player_name)
+            self.__add_player(new_player)
+            player = self.__get_player_by_name(player_name)
         return player
 
+    def update_player_geo(self, player_name: str, player_geo: int):
+        """
+        set the geo value for a player
+
+        :param player_name: the twitch display name of the player
+        :param player_geo: the new geo value of the player
+        :return:
+        """
+        self.get_or_create_player(player_name)  # make sure the player exists
+        query_search_query = {"name": player_name}
+        update_command = {"$set": {"geo": player_geo}}
+        self.player_table.update_one(query_search_query, update_command)
+
+    def update_player_upgrades(self, player_name: str, player_upgrades: list):
+        """
+        set the list of upgrades the player has
+
+        :param player_name: the twitch display name of the player
+        :param player_upgrades: the new upgrades the player should have
+        :return:
+        """
+        self.get_or_create_player(player_name)  # make sure the player exists
+        query_search_query = {"name": player_name}
+        update_command = {"$set": {"upgrades": player_upgrades}}
+        self.player_table.update_one(query_search_query, update_command)
+
     @staticmethod
-    def get_default_player(player_name: str):
+    def __get_default_player(player_name: str):
         """
         create a player that has only the base strenght, 1 geo and the old nail
 
@@ -62,31 +90,3 @@ class PlayerDatabase(object):
         :return:
         """
         return {"strength": 10, "name": player_name, "geo": 1, "upgrades": [0]}
-
-
-    ##########################################################################################
-    ############################## UPDATE PLAYER ###################################
-    ##########################################################################################
-
-    def update_player_geo(self, player_name: str, player_geo: int):
-        """
-        set the geo value for a player
-        :param player_name: the twitch display name of the player
-        :param player_geo: the new geo value of the player
-        :return:
-        """
-        query_search_query = {"name": player_name}
-        update_command = {"$set": {"geo": player_geo}}
-        self.player_table.update_one(query_search_query, update_command)
-
-    def update_player_upgrades(self, player_name: str, player_upgrades: list):
-        """
-        update the list of upgrades the player has
-
-        :param player_name: the twitch display name of the player
-        :param player_upgrades: the new upgrades the player should have
-        :return:
-        """
-        query_search_query = {"name": player_name}
-        update_command = {"$set": {"upgrades": player_upgrades}}
-        self.player_table.update_one(query_search_query, update_command)
