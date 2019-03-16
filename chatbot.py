@@ -27,7 +27,8 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         self.quotation_file = 'config/quotation.txt'
         self.boss_file = 'config/bosses.txt'
         self.count = 0
-        self.battle_manager = BattleManager(BossLoader())
+        self.boss_loader = BossLoader()
+        self.battle_manager = BattleManager(self.boss_loader)
         self.player_database = PlayerDatabase()
         self.upgrade_loader = UpgradeLoader()
 
@@ -103,7 +104,8 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         logging.debug("Can use command: %s" % permission)
         return permission
 
-    def has_badge(self, badges: dict, badge_name: str = 'moderator'):
+    @staticmethod
+    def has_badge(badges: dict, badge_name: str = 'moderator'):
         """
         check if the badge list contains a specific badge
 
@@ -155,7 +157,11 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             if sub == "1":
                 message = ("Well done %s, you are subscribed. Keep being subbed to increase your power even more!" % name)
             else:
-                message = ("I see %s. You lack in power. You should subscribe to @VysuaLsTV to fix this." % name)
+                message = ("I see %s. You lack in power. You should subscribe to @%s to fix this." % (name, self.channel_plain))
+            c.privmsg(self.channel, message)
+        elif cmd == "bosses":
+            bosses, _ = self.boss_loader.get_all_bosses()
+            message = 'Boss list is to long. Please check the following link to see all bosses <tbd>'
             c.privmsg(self.channel, message)
         elif cmd == "random":
             name = self.get_twitch_name(e)
@@ -171,6 +177,10 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
                 message = self.battle_manager.fight_boss(player, boss_id)
             else:
                 message = 'You entered an invalid number. Can not fight that boss'
+            c.privmsg(self.channel, message)
+        elif cmd == "upgrades":
+            upgrades, _ = self.upgrade_loader.get_all_upgrades()
+            message = self.transform_upgrades(upgrades)
             c.privmsg(self.channel, message)
         elif cmd == "buy":
             received_id = e.arguments[0][5:]  # get message and remove first 5 chars '!buy '
@@ -247,6 +257,17 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
     @staticmethod
     def is_sub(e: Event):
         return e.tags[8]['value']  # is subbed this is 1 (as str)
+
+    @staticmethod
+    def transform_upgrades(upgrades: list):
+        message = []
+        for upgrade in upgrades:
+            upgrade_id = upgrade['id']
+            name = upgrade['name']
+            cost = upgrade['costs']
+            # str is an immutabel object! add multiple strings into one list instead of changing message
+            message.append('Id: %i, Name: %s, Costs: %i' % (upgrade_id, name, cost))
+        return str(message)
 
     def get_player(self, name: str):
         player_profile = self.player_database.get_or_create_player(name)

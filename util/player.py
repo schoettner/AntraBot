@@ -42,7 +42,9 @@ class Player(object):
         # time to buy the upgrade
         self.profile['geo'] -= upgrade['costs']  # reduce your geo count
         self.profile['upgrades'].append(upgrade['id'])
-        self.profile['upgrades'].remove(upgrade['requires'])
+        requires_id = upgrade['requires']
+        if requires_id is not None:
+            self.profile['upgrades'].remove(requires_id)
 
         # save new upgrades and geo
         self.player_database.update_player_geo(player_name=self.profile['name'], player_geo=self.profile['geo'])
