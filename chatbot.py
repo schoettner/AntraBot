@@ -8,6 +8,7 @@ import logging
 import schedule
 from irc.client import Event, ServerConnection
 
+from util.battle_manager import BattleManager
 from util.player_database import PlayerDatabase
 from util.boss_loader import BossLoader
 from util.player import Player
@@ -26,7 +27,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         self.quotation_file = 'config/quotation.txt'
         self.boss_file = 'config/bosses.txt'
         self.count = 0
-        self.battle = BossLoader()
+        self.battle_manager = BattleManager(BossLoader())
         self.player_database = PlayerDatabase()
         self.upgrade_loader = UpgradeLoader()
 
@@ -159,7 +160,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         elif cmd == "battle":
             name = self.get_twitch_name(e)
             player = self.get_player(name)
-            message = self.battle.fight_random_boss(player)
+            message = self.battle_manager.fight_random_boss(player)
             # message = self.battle.fight_boss(10, 2)
             c.privmsg(self.channel, message)
         elif cmd == "buy":
@@ -264,6 +265,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         url = 'https://tmi.twitch.tv/group/user/%s/chatters' % self.channel_plain
         channel_viewers = requests.get(url).json()['chatters']['viewers']  # not sure yet if mod/admin are separate or also in here
         return channel_viewers
+
 
 def main():
     if len(sys.argv) != 5:
