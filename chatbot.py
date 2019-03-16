@@ -131,10 +131,10 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
 
         # general commands
         if cmd == "bot":
-            message = "AntraBot is up and running. Getting more powerful"
+            message = "AntraBot is up and running. Getting more powerful. Check https://antrabot.fandom.com/wiki/AntraBot_Wiki# for more details."
             c.privmsg(self.channel, message)
         elif cmd == "antrabot":
-            message = "The public commands are: !bot, !vysquote, !sub, !boss, !zote, !random, !buy <upgrade_id>, !fight <boss_id>"
+            message = "The public commands are: !bot, !vysquote, !sub, !bosses, !upgrades, !zote, !random, !buy <upgrade_id>, !fight <boss_id>"
             print(message)
             c.privmsg(self.channel, message)
         elif cmd == "boss":
@@ -161,7 +161,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
             c.privmsg(self.channel, message)
         elif cmd == "bosses":
             bosses, _ = self.boss_loader.get_all_bosses()
-            message = 'Boss list is to long. Please check the following link to see all bosses <tbd>'
+            message = 'All bosses can be found here: https://antrabot.fandom.com/wiki/Bosses'
             c.privmsg(self.channel, message)
         elif cmd == "random":
             name = self.get_twitch_name(e)
@@ -179,8 +179,9 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
                 message = 'You entered an invalid number. Can not fight that boss'
             c.privmsg(self.channel, message)
         elif cmd == "upgrades":
-            upgrades, _ = self.upgrade_loader.get_all_upgrades()
-            message = self.transform_upgrades(upgrades)
+            # upgrades, _ = self.upgrade_loader.get_all_upgrades()
+            # message = self.transform_upgrades(upgrades)
+            message = 'All upgrades can be found here: https://antrabot.fandom.com/wiki/Upgrades'
             c.privmsg(self.channel, message)
         elif cmd == "buy":
             received_id = e.arguments[0][5:]  # get message and remove first 5 chars '!buy '
@@ -190,7 +191,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
                 upgrade_id = int(received_id)  # need to cast the str i.e. to int
                 message = player.buy_upgrade(upgrade_id)  # upgrade your nail
             else:
-                message = 'You entered an invalid number. Can not buy the item.'
+                message = 'You entered an invalid number. Can not buy the item. Use !buy <upgrade_id>'
             c.privmsg(self.channel, message)
 
     def special_command(self, e: Event, cmd: str):
@@ -247,7 +248,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         for viewer in viewers:
             player = self.get_player(viewer)
             player.grant_geo(geo=10)
-        message = 'All viewers in chat have been blessed by the gods. You all gained 10 Geo. Use !buy to get yourself an upgrade!'
+        message = 'All viewers in chat have been blessed by the gods. You all gained 10 Geo. Use !upgrades to see what you can buy!'
         c.privmsg(self.channel, message)
 
     @staticmethod
