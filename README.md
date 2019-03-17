@@ -2,7 +2,7 @@
 Simple chat bot for experimenting with twitch icr client. This project is also used to teach coding
 by example.The bot should perform fun tasks that should be helpful.
 
-You can find end-user documentation on [Fandom](https://antrabot.fandom.com/wiki/AntraBot_Wiki#)
+You can find end-user documentation on [Fandom](https://antrabot.fandom.com/wiki/AntraBot_Wiki#).
 
 ### Requirements
 The bot is written with python 3.5
@@ -40,6 +40,7 @@ python3 chatbot.py AntraBot jycvlymxj2qacjlw08c1t5ud7vqgif <token> antrazith
 | messages sent from the irc client do sometimes not appear in twitch chat | no - irc cooldown on twitch end |
 | player storage is not optimal | yes |
 | players can not yet purchase items with a command | yes |
+| geo schedule not working yet | yes |
 
 ### References
 [Example-Code from Amazon](https://github.com/twitchdev/chat-samples/tree/master/python)

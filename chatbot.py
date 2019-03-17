@@ -1,18 +1,18 @@
 import sys
-from random import randint
 
 import irc.bot
-import requests
-import logging
+from threading import Timer
 
-import schedule
 from irc.client import Event, ServerConnection
 
 from util.battle_manager import BattleManager
+from util.bot_utils import get_viewers, get_channel_id, get_player_stats
+from util.event_handler import get_twitch_name, is_superior_user, get_command
 from util.player_database import PlayerDatabase
 from util.boss_loader import BossLoader
 from util.player import Player
 from util.upgrade_loader import UpgradeLoader
+from vys_command_handler import VysCommandHandler
 
 
 class TwitchBot(irc.bot.SingleServerIRCBot):
@@ -24,25 +24,27 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         self.channel_plain = channel
 
         # command specific values
-        self.quotation_file = 'config/quotation.txt'
-        self.boss_file = 'config/bosses.txt'
-        self.count = 0
+        self.enable_geo_timer = False
+        self.geo_time = 600  # seconds until ppl get geo
+        self.geo_reward = 10  # amount of geo people get every tick
         self.boss_loader = BossLoader()
         self.battle_manager = BattleManager(self.boss_loader)
         self.player_database = PlayerDatabase()
         self.upgrade_loader = UpgradeLoader()
 
         # Get the channel id, we will need this for v5 API calls
-        url = 'https://api.twitch.tv/kraken/users?login=' + channel
-        headers = {'Client-ID': client_id, 'Accept': 'application/vnd.twitchtv.v5+json'}
-        r = requests.get(url, headers=headers).json()
-        self.channel_id = r['users'][0]['_id']
+        self.channel_id = get_channel_id(client_id, channel)
 
         # Create IRC bot connection
         server = 'irc.chat.twitch.tv'
         port = 6667
         print('Connecting to ' + server + ' on port ' + str(port) + '...')
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port, 'oauth:'+token)], username, username)
+
+        # wait for the connection to be established than start the geo timer
+        if self.enable_geo_timer:
+            Timer(interval=self.geo_time, function=self.schedule_geo).start()
+        self.vys_command_handler = VysCommandHandler(self.connection, channel)
 
     def on_welcome(self, c: ServerConnection, e: Event):
         """
@@ -52,10 +54,8 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
 
         :param c: server connection
         :param e: event
-        :return: None
         """
         print('Joining ' + self.channel)
-
         # You must request specific capabilities before you can use them
         c.cap('REQ', ':twitch.tv/membership')
         c.cap('REQ', ':twitch.tv/tags')
@@ -68,237 +68,144 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
 
         :param c: the server connection. can be used to transfer an message
         :param e: the event. it contains sender, message, badges etc
-        :return: None
         """
-
         # get the command
-        if e.arguments[0][:1] == '!':
-            cmd = e.arguments[0].split(' ')[0][1:]
-            logging.info('Received command: ' + cmd)
-        else:
-            # leave if its not a command
+        cmd = get_command(e)
+        if cmd is None:
+            # leave early if there is no command
             return
 
         # execute public command
         self.public_command(e, cmd)
+        self.vys_command_handler.public_command(e, cmd)
 
-        # execute the moderator commands
-        allowed = self.get_command_permission(e.tags[0])
+        # execute the super commands
+        allowed = is_superior_user(e)
         if allowed is True:
             self.special_command(e, cmd)
-
-    def get_command_permission(self, badges: dict):
-        """
-        checks if the badge list contains either broadcaster, moderator or vip
-
-        :param badges: the whole bade list
-        :return: Boolean if one of the demanded badges is given
-        """
-        badge_value = badges['value']
-        if badge_value is None:
-            return False
-        moderator = self.has_badge(badges)
-        broadcaster = self.has_badge(badges, 'broadcaster')
-        vip = self.has_badge(badges, 'vip')
-        permission = moderator or broadcaster or vip
-        logging.debug("Can use command: %s" % permission)
-        return permission
-
-    @staticmethod
-    def has_badge(badges: dict, badge_name: str = 'moderator'):
-        """
-        check if the badge list contains a specific badge
-
-        :param badges: the whole badge list
-        :param badge_name: the badge you are looking for
-        :return: if the badge is in the list
-        """
-        badges_value = badges['value']
-        if badges_value is None:
-            return False
-        return badge_name in badges_value
+            self.vys_command_handler.special_command(e, cmd)
 
     def public_command(self, e: Event, cmd: str):
         """
-        commands that should be available for everyone. no vip/mod/broadcaster needed.
+        commands that should be available for everyone.
         the message for the command is directly printed to twitch chat
 
         :param e: the chat event. containing arguments and tags
         :param cmd: the command as string
         :return: None
         """
-        c = self.connection
+        connection = self.connection
 
         # general commands
         if cmd == "bot":
-            message = "AntraBot is up and running. Getting more powerful. Check https://antrabot.fandom.com/wiki/AntraBot_Wiki# for more details."
-            c.privmsg(self.channel, message)
-        elif cmd == "antrabot":
-            message = "The public commands are: !bot, !vysquote, !sub, !bosses, !upgrades, !zote, !random, !buy <upgrade_id>, !fight <boss_id>"
-            print(message)
-            c.privmsg(self.channel, message)
-        elif cmd == "boss":
-            # todo replace with json file. no need to maintain two separate boss files
-            message = self.read_random_line_from_file(self.boss_file)
-            c.privmsg(self.channel, message)
-        elif cmd == "vysquote":
-            message = self.read_random_line_from_file(self.quotation_file)
-            logging.debug("The printed quote will be: %s" % message)
-            c.privmsg(self.channel, message)
-        elif cmd == "purple":
-            message = "Dont listen to StreamElements. The knight is purple due to black magic."
-            c.privmsg(self.channel, message)
-        elif cmd == "zote":
-            message = "He who must not be named. Just pass by and let Vengefly King do its job."
-            c.privmsg(self.channel, message)
-        elif cmd == "sub":
-            name = self.get_twitch_name(e)
-            sub = self.is_sub(e)
-            if sub == "1":
-                message = ("Well done %s, you are subscribed. Keep being subbed to increase your power even more!" % name)
-            else:
-                message = ("I see %s. You lack in power. You should subscribe to @%s to fix this." % (name, self.channel_plain))
-            c.privmsg(self.channel, message)
+            message = "AntraBot is up and running. Getting more powerful. Check " \
+                      "https://antrabot.fandom.com/wiki/AntraBot_Wiki# for more details. "
+            connection.privmsg(self.channel, message)
+        if cmd == "commands":
+            message = "Check https://antrabot.fandom.com/wiki/Commands for more details."
+            connection.privmsg(self.channel, message)
+
+        # stats commands
+        if cmd == "stats":
+            player = self.get_player_by_event(e)
+            message = get_player_stats(player)
+            connection.privmsg(self.channel, message)
+        if cmd == "leaderboard":
+            message = "print leader board. tbd."
+            connection.privmsg(self.channel, message)
+
+        # boss fight commands
         elif cmd == "bosses":
-            bosses, _ = self.boss_loader.get_all_bosses()
             message = 'All bosses can be found here: https://antrabot.fandom.com/wiki/Bosses'
-            c.privmsg(self.channel, message)
+            connection.privmsg(self.channel, message)
         elif cmd == "random":
-            name = self.get_twitch_name(e)
-            player = self.get_player(name)
+            player = self.get_player_by_event(e)
             message = self.battle_manager.fight_random_boss(player)
-            c.privmsg(self.channel, message)
+            connection.privmsg(self.channel, message)
         elif cmd == "fight":
             received_id = e.arguments[0][7:]  # get message and remove first 7 chars '!fight '
             if str(received_id).isnumeric():  # check if the given id is valid
-                name = self.get_twitch_name(e)
-                player = self.get_player(name)
+                player = self.get_player_by_event(e)
                 boss_id = int(received_id)
                 message = self.battle_manager.fight_boss(player, boss_id)
             else:
                 message = 'You entered an invalid number. Can not fight that boss'
-            c.privmsg(self.channel, message)
+            connection.privmsg(self.channel, message)
+
+        # upgrade commands
         elif cmd == "upgrades":
-            # upgrades, _ = self.upgrade_loader.get_all_upgrades()
-            # message = self.transform_upgrades(upgrades)
             message = 'All upgrades can be found here: https://antrabot.fandom.com/wiki/Upgrades'
-            c.privmsg(self.channel, message)
+            connection.privmsg(self.channel, message)
         elif cmd == "buy":
             received_id = e.arguments[0][5:]  # get message and remove first 5 chars '!buy '
             if str(received_id).isnumeric():  # check if the given id is valid
-                name = self.get_twitch_name(e)
-                player = self.get_player(name)
+                player = self.get_player_by_event(e)
                 upgrade_id = int(received_id)  # need to cast the str i.e. to int
                 message = player.buy_upgrade(upgrade_id)  # upgrade your nail
             else:
                 message = 'You entered an invalid number. Can not buy the item. Use !buy <upgrade_id>'
-            c.privmsg(self.channel, message)
+            connection.privmsg(self.channel, message)
 
     def special_command(self, e: Event, cmd: str):
         """
-        execute a command. the permissions are not checked in here. only moderator etc should be allowed to use those commands.
+        commands that are only available super users (broadcaster,mod,vip)
         the message for the command is directly printed to twitch chat
 
         :param e: the chat event. containing arguments and tags
         :param cmd: the command as string
-        :return: None
         """
-        c = self.connection
+        connection = self.connection
 
-        # counting commands 'travesty' or 'unfortunate'
-        if cmd == "counter":
-            message = "count is at %s" % self.count
-            c.privmsg(self.channel, message)
-        elif cmd == "count":
-            self.count += 1
-            message = "count is at %s" % self.count
-            c.privmsg(self.channel, message)
-        elif cmd == "countdown":
-            self.count -= 1
-            message = "count is at %s" % self.count
-            c.privmsg(self.channel, message)
-        elif cmd == "countreset":
-            self.count = 0
-            message = "count is at %s" % self.count
-            c.privmsg(self.channel, message)
-
-        # give geo to the ppl!
-        elif cmd == "geo":
+        # give geo to the people
+        if cmd == "geo":
             self.grant_geo()
 
-        elif cmd == "timer":
-            # todo this does crash at this point. fix later
-            schedule.every(10).seconds.do(self.grant_geo())
-
         # special commands
-        elif cmd == "modcommands":
-            message = "Moderators use the public commands and: !counter, !count, !countdown, !countreset, !welcome, !antra"
-            c.privmsg(self.channel, message)
-        elif cmd == "welcome":
-            message = ("Welcome new follower. You made a wise choice to follow %s. Sit back and enjoy your time." % self.channel)
-            c.privmsg(self.channel, message)
         elif cmd == "antra":
             print(e)
             message = "This is a debug command for the dark lord himself. Do not worry about it."
-            c.privmsg(self.channel, message)
+            connection.privmsg(self.channel, message)
+
+    def schedule_geo(self):
+        """
+        create an infinite loop to grant geo every few minutes
+        """
+        self.grant_geo()
+        Timer(interval=self.geo_time, function=self.schedule_geo).start()  # timer to grant geo again in 10 minutes
 
     def grant_geo(self):
+        """
+        give geo to everyone who is in chat
+        """
         c = self.connection
-        viewers = self.get_viewers()
+        viewers = get_viewers(self.channel_plain)
         for viewer in viewers:
-            player = self.get_player(viewer)
-            player.grant_geo(geo=10)
-        message = 'All viewers in chat have been blessed by the gods. You all gained 10 Geo. Use !upgrades to see what you can buy!'
+            player = self.get_player_by_name(viewer)
+            player.grant_geo(geo=self.geo_reward)
+        message = 'All viewers in chat have been blessed by the gods. You all gained %i Geo. Use !upgrades to see ' \
+                  'what you can buy!' % self.geo_reward
         c.privmsg(self.channel, message)
 
-    @staticmethod
-    def get_twitch_name(e: Event):
-        return e.tags[2]['value']  # get the display name
+    def get_player_by_name(self, name: str):
+        """
+        get the player from the database
 
-    @staticmethod
-    def is_sub(e: Event):
-        return e.tags[8]['value']  # is subbed this is 1 (as str)
-
-    @staticmethod
-    def transform_upgrades(upgrades: list):
-        message = []
-        for upgrade in upgrades:
-            upgrade_id = upgrade['id']
-            name = upgrade['name']
-            cost = upgrade['costs']
-            # str is an immutabel object! add multiple strings into one list instead of changing message
-            message.append('Id: %i, Name: %s, Costs: %i' % (upgrade_id, name, cost))
-        return str(message)
-
-    def get_player(self, name: str):
+        :param name: name of the player
+        :return: the player
+        """
         player_profile = self.player_database.get_or_create_player(name)
         player = Player(profile=player_profile, upgrade_loader=self.upgrade_loader, player_database=self.player_database)
         return player
 
-    @staticmethod
-    def read_random_line_from_file(file_name: str):
+    def get_player_by_event(self, e: Event):
         """
-        read quote lines from a text file. The file is loaded every time to allow dynamic changes without a bot restart
+        get the player from the database
 
-        :param file_name: name of the text-file with the quotes. has to be in the same folder
-        :return: None
+        :param e: the twitch event which contains the name of the sender
+        :return: the player
         """
-        file = open(file_name, 'r')
-        lines = file.readlines()
-        rand = randint(0, len(lines)-1)
-        message = lines[rand]
-        return message[:-1]  # remove the new line character. throws error in irc client
-
-    def get_viewers(self):
-        """
-        use the switch REST API to get all current viewers of a channel
-
-        :return: list of all viewers in the channel
-        """
-        url = 'https://tmi.twitch.tv/group/user/%s/chatters' % self.channel_plain
-        channel_viewers = requests.get(url).json()['chatters']['viewers']  # not sure yet if mod/admin are separate or also in here
-        return channel_viewers
-
+        name = get_twitch_name(e)
+        return self.get_player_by_name(name)
 
 def main():
     if len(sys.argv) != 5:
