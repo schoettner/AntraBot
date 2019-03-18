@@ -38,7 +38,8 @@ class SpecPlayer:
     def test_purchase_to_expensive_upgrade(self):
         player = self.given_default_player()
 
-        expected_message = 'Seems like you have not enough Geo. Come back when you collected some more.'
+        expected_message = 'Seems like you have not enough Geo. Come back when you collected some more. ' \
+                           'Use !stats to check your Geo.'
         purchase_message = player.buy_upgrade(upgrade_id=2)
         assert purchase_message == expected_message
 
