@@ -24,7 +24,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         self.channel_plain = channel
 
         # command specific values
-        self.enable_geo_timer = False
+        self.enable_geo_timer = True
         self.geo_time = 600  # seconds until ppl get geo
         self.geo_reward = 10  # amount of geo people get every tick
         self.boss_loader = BossLoader()
@@ -99,7 +99,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         # general commands
         if cmd == "bot":
             message = "AntraBot is up and running. Getting more powerful. Check " \
-                      "https://antrabot.fandom.com/wiki/AntraBot_Wiki# for more details. "
+                      "https://antrabot.fandom.com/wiki/How_to_play for more details how to play. "
             connection.privmsg(self.channel, message)
         if cmd == "commands":
             message = "Check https://antrabot.fandom.com/wiki/Commands for more details."
@@ -129,7 +129,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
                 boss_id = int(received_id)
                 message = self.battle_manager.fight_boss(player, boss_id)
             else:
-                message = 'You entered an invalid number. Can not fight that boss'
+                message = 'You entered an invalid number. Can not fight that boss.'
             connection.privmsg(self.channel, message)
 
         # upgrade commands
@@ -143,7 +143,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
                 upgrade_id = int(received_id)  # need to cast the str i.e. to int
                 message = player.buy_upgrade(upgrade_id)  # upgrade your nail
             else:
-                message = 'You entered an invalid number. Can not buy the item. Use !buy <upgrade_id>'
+                message = 'You entered an invalid number. Can not buy that item. Use !buy <upgrade_id>'
             connection.privmsg(self.channel, message)
 
     def special_command(self, e: Event, cmd: str):
@@ -182,8 +182,8 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         for viewer in viewers:
             player = self.get_player_by_name(viewer)
             player.grant_geo(geo=self.geo_reward)
-        message = 'All viewers in chat have been blessed by the gods. You all gained %i Geo. Use !upgrades to see ' \
-                  'what you can buy!' % self.geo_reward
+        message = 'All viewers in chat have been blessed by the gods. You all gained %i Geo. Use !bot to see ' \
+                  'how to play.' % self.geo_reward
         c.privmsg(self.channel, message)
 
     def get_player_by_name(self, name: str):

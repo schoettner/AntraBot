@@ -33,7 +33,8 @@ class Player(object):
 
         # check if the player has enough cash
         if self.profile['geo'] < upgrade['costs']:
-            return 'Seems like you have not enough Geo. Come back when you collected some more.'
+            return 'Seems like you have not enough Geo. Come back when you collected some more. ' \
+                   'Use !stats to check your Geo.'
 
         # check if the player owns the required item
         if not self.upgrade_loader.meets_requirements(upgrade, self.profile['upgrades']):
