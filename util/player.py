@@ -20,7 +20,8 @@ class Player(object):
 
         # avoid that people buy start upgrade again
         if upgrade_id == 0:
-            return 'You can not buy this upgrade. This thing is way to old for an experienced warrior like yourself.'
+            return "You can not purchase 'Old Nail' again. You either have it already or upgraded it. " \
+                   "Check https://antrabot.fandom.com/wiki/How_to_play for more details."
 
         # check if the player owns the upgrade already
         if upgrade_id in self.profile['upgrades']:
@@ -29,7 +30,8 @@ class Player(object):
         # get the upgrade
         upgrade = self.upgrade_loader.get_upgrade(upgrade_id)
         if upgrade is None:
-            return 'Upgrade with the id: %i could not be found.' % upgrade_id
+            return 'Upgrade with the id: %i could not be found. ' \
+                   'Check https://antrabot.fandom.com/wiki/Upgrades for to find valid Upgrade IDs.' % upgrade_id
 
         # check if the player has enough cash
         if self.profile['geo'] < upgrade['costs']:
@@ -38,7 +40,8 @@ class Player(object):
 
         # check if the player owns the required item
         if not self.upgrade_loader.meets_requirements(upgrade, self.profile['upgrades']):
-            return 'You do not own the required item to do the upgrade. Or you already own a better version.'
+            return "You do not meet the requirements to purchase '%s'. " \
+                   "You either do not have the required upgrade or you already own a better version." % upgrade['name']
 
         # time to buy the upgrade
         self.profile['geo'] -= upgrade['costs']  # reduce your geo count
@@ -51,7 +54,7 @@ class Player(object):
         self.player_database.update_player_geo(player_name=self.profile['name'], player_geo=self.profile['geo'])
         self.player_database.update_player_upgrades(player_name=self.profile['name'], player_upgrades=self.profile['upgrades'])
 
-        return 'Congratulations, you purchased an upgrade! Now get into some bosses with your new obtained power!'
+        return "Congratulations, you purchased '%s'! Now get into some bosses with your new obtained power!" % upgrade['name']
 
     def get_strength(self):
         """
@@ -66,11 +69,20 @@ class Player(object):
         total_strength = self.profile['strength'] + upgrade_strength
         return total_strength
 
-    def grant_geo(self, geo: int = 10):
+    def add_geo(self, geo: int = 10):
         """
-        give the player geo for interaction or time in chat
-        :param geo: amount of geo you want to grant
-        :return:
+        give the player geo for interaction or time in chat. the amount of geo is added with its current geo
+
+        :param geo: amount of geo you want to add
         """
         self.profile['geo'] += geo
+        self.player_database.update_player_geo(player_name=self.profile['name'], player_geo=self.profile['geo'])
+
+    def set_geo(self, geo: int = 10):
+        """
+        give the player geo for interaction or time in chat
+
+        :param geo: amount of geo you want to set
+        """
+        self.profile['geo'] = geo
         self.player_database.update_player_geo(player_name=self.profile['name'], player_geo=self.profile['geo'])

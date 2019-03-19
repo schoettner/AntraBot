@@ -7,15 +7,15 @@ from irc.client import Event, ServerConnection
 
 from util.battle_manager import BattleManager
 from util.bot_utils import get_viewers, get_channel_id, get_player_stats
-from util.event_handler import get_twitch_name, is_superior_user, get_command
+from util.event_handler import get_twitch_name, is_superior_user, get_command, get_full_message
 from util.player_database import PlayerDatabase
 from util.boss_loader import BossLoader
 from util.player import Player
 from util.upgrade_loader import UpgradeLoader
-from vys_command_handler import VysCommandHandler
+from util.vys_command_handler import VysCommandHandler
 
 
-class TwitchBot(irc.bot.SingleServerIRCBot):
+class AntraBot(irc.bot.SingleServerIRCBot):
 
     def __init__(self, username, client_id, token, channel):
         self.client_id = client_id
@@ -99,7 +99,7 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         # general commands
         if cmd == "bot":
             message = "AntraBot is up and running. Getting more powerful. Check " \
-                      "https://antrabot.fandom.com/wiki/How_to_play for more details how to play. "
+                      "https://antrabot.fandom.com/wiki/How_to_play for more details how to play."
             connection.privmsg(self.channel, message)
         if cmd == "commands":
             message = "Check https://antrabot.fandom.com/wiki/Commands for more details."
@@ -108,8 +108,8 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         # stats commands
         if cmd == "stats":
             player = self.get_player_by_event(e)
-            message = get_player_stats(player)
-            connection.privmsg(self.channel, message)
+            message, upgrades = get_player_stats(player)
+            connection.privmsg(self.channel, message + self.get_player_upgrades(upgrades))
         if cmd == "leaderboard":
             message = "print leader board. tbd."
             connection.privmsg(self.channel, message)
@@ -159,6 +159,14 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         # give geo to the people
         if cmd == "geo":
             self.grant_geo()
+        if cmd == "geoset":
+            # todo add to fandom wiki
+            message = self.set_player_geo(e)
+            connection.privmsg(self.channel, message)
+        if cmd == "reset":
+            # todo add to fandom
+            message = self.reset_player(e)
+            connection.privmsg(self.channel, message)
 
         # special commands
         elif cmd == "antra":
@@ -181,10 +189,43 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         viewers = get_viewers(self.channel_plain)
         for viewer in viewers:
             player = self.get_player_by_name(viewer)
-            player.grant_geo(geo=self.geo_reward)
+            player.add_geo(geo=self.geo_reward)
         message = 'All viewers in chat have been blessed by the gods. You all gained %i Geo. Use !bot to see ' \
                   'how to play.' % self.geo_reward
         c.privmsg(self.channel, message)
+
+    def set_player_geo(self, event: Event):
+        """
+        set the geo for a certain player
+
+        :param event: The twitch bot event
+        """
+        message_splits = get_full_message(event).split()
+        if len(message_splits) is not 3:
+            print('invalid command results given: %i' % len(message_splits))
+            return "You did not enter the correct number of arguments. Please use 'geoset! <player name> <geo amount>'"
+        name = message_splits[1]
+        geo = message_splits[2]
+        if not str(geo).isnumeric():  # does also handle negative values
+            return "You did not enter a valid number for the amount of Geo."
+        player = self.get_player_by_name(name)
+        player.set_geo(int(geo))
+        return "Player %s now has %s Geo." % (name, geo)
+
+    def reset_player(self, event: Event):
+        """
+        reset a player by deleting it from the database
+
+        :param event: the event that tells to delete a character
+        :return: the delete message
+        """
+        message_splits = get_full_message(event).split()
+        if len(message_splits) is not 2:
+            print('invalid command results given: %i' % len(message_splits))
+            return "You did not enter the correct number of arguments. Please use 'reset! <player name>'"
+        name = message_splits[1]
+        self.player_database.delete_player(name)
+        return 'You did reset the player: %s' % name
 
     def get_player_by_name(self, name: str):
         """
@@ -207,6 +248,14 @@ class TwitchBot(irc.bot.SingleServerIRCBot):
         name = get_twitch_name(e)
         return self.get_player_by_name(name)
 
+    def get_player_upgrades(self, upgrade_ids: list):
+        upgrade_names = []
+        upgrades = self.upgrade_loader.get_upgrades_by_ids(upgrade_ids)
+        for upgrade in upgrades:
+            upgrade_names.append(upgrade['name'])
+        return str(upgrade_names)
+
+
 def main():
     if len(sys.argv) != 5:
         print("Usage: twitchbot <username> <client id> <token> <channel>")
@@ -217,7 +266,7 @@ def main():
     token = sys.argv[3]
     channel = sys.argv[4]
 
-    bot = TwitchBot(username, client_id, token, channel)
+    bot = AntraBot(username, client_id, token, channel)
     bot.start()
 
 

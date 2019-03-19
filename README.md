@@ -44,6 +44,14 @@ python3 chatbot.py AntraBot jycvlymxj2qacjlw08c1t5ud7vqgif <token> antrazith
 
 ### References
 [Example-Code from Amazon](https://github.com/twitchdev/chat-samples/tree/master/python)
-[AntraBot Wiki](https://www.fandom.com/)
+[AntraBot Wiki](https://antrabot.fandom.com/wiki/AntraBot_Wiki#)
 [Twitch IRC Guide](https://dev.twitch.tv/docs/irc/guide/)
 
+### todo from feedback
+impl leader board
+add highest defeated str in stats
+penalty for death
+reward for boss defeat
+add test to purchase all 10 upgrades in a row
+add test for vys command handler
+use embedded mongo db for testing

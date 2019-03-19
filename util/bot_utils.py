@@ -22,15 +22,25 @@ def transform_upgrades(upgrades: list):
     return str(message)
 
 
-def get_viewers(channel: str):
+def get_viewers(channel: str, include_all: bool = True):
     """
     use the switch REST API to get all current viewers of a channel
+    e.g. https://tmi.twitch.tv/group/user/antrazith/chatters
 
+    :param channel: the twitch channel you want to check
+    :param include_all: if true, all mods are included too
     :return: list of all viewers in the channel
     """
     url = 'https://tmi.twitch.tv/group/user/%s/chatters' % channel
-    channel_viewers = requests.get(url).json()['chatters']['viewers']  # not sure yet if mod/admin are separate or also in here
-    return channel_viewers
+    request_results = requests.get(url).json()['chatters']
+    channel_viewers = request_results['viewers']
+    if not include_all:
+        return channel_viewers
+    broadcaster = request_results['broadcaster']
+    vips = request_results['vips']
+    mods = request_results['moderators']
+
+    return channel_viewers + broadcaster + vips + mods
 
 
 def read_random_line_from_file(file_name: str):
@@ -52,5 +62,4 @@ def get_player_stats(player: Player):
     name = profile['name']
     strength = player.get_strength()
     geo = profile['geo']
-    upgrades = str(profile['upgrades'])
-    return '@%s you have %i Geo, %i total strength and the upgrades: %s' % (name, geo, strength, upgrades)
+    return '@%s you have %i Geo, %i total strength and the upgrades: ' % (name, geo, strength), profile['upgrades']

@@ -17,21 +17,29 @@ class SpecPlayer:
 
     def test_grant_geo_to_player(self):
         player = self.given_default_player()
-        player.grant_geo(10)
+        player.add_geo(10)
         assert player.profile['geo'] == 11  # 1 start + 10 granted
 
     def test_purchase_base_nail(self):
         player = self.given_default_player()
 
-        expected_message = 'You can not buy this upgrade. This thing is way to old for an experienced warrior like yourself.'
+        expected_message = "You can not purchase 'Old Nail' again. You either have it already or upgraded it. Check https://antrabot.fandom.com/wiki/How_to_play for more details."
         purchase_message = player.buy_upgrade(upgrade_id=0)
         assert purchase_message == expected_message
 
     def test_purchase_owned_upgrade(self):
         player = self.given_default_player()
+        player.upgrade_loader.set_upgrade(None)
+
+        expected_message = 'You already own this upgrade. You can not purchase it again.'
+        purchase_message = player.buy_upgrade(upgrade_id=1)
+        assert purchase_message == expected_message
+
+    def test_purchase_invalid_id(self):
+        player = self.given_default_player()
         player.upgrade_loader.set_upgrade(None)  # return None as upgrade
 
-        expected_message = 'Upgrade with the id: 99 could not be found.'
+        expected_message = 'Upgrade with the id: 99 could not be found. Check https://antrabot.fandom.com/wiki/Upgrades for to find valid Upgrade IDs.'
         purchase_message = player.buy_upgrade(upgrade_id=99)
         assert purchase_message == expected_message
 
@@ -48,7 +56,8 @@ class SpecPlayer:
         player.upgrade_loader.set_requirements(False)  # return that the player does not meet the requirements
         player.profile['geo'] = 100000  # give the player enough money to purchase the item
 
-        expected_message = 'You do not own the required item to do the upgrade. Or you already own a better version.'
+        expected_message = "You do not meet the requirements to purchase 'Channelled Nail'. " \
+                           "You either do not have the required upgrade or you already own a better version."
         purchase_message = player.buy_upgrade(upgrade_id=2)
         assert purchase_message == expected_message
 
@@ -56,7 +65,8 @@ class SpecPlayer:
         player = self.given_default_player()
         player.profile['geo'] = 800  # give the player enough money to purchase the item
 
-        expected_message = 'Congratulations, you purchased an upgrade! Now get into some bosses with your new obtained power!'
+        expected_message = "Congratulations, you purchased 'Channelled Nail'! " \
+                           "Now get into some bosses with your new obtained power!"
         purchase_message = player.buy_upgrade(upgrade_id=2)
         assert purchase_message == expected_message
         assert player.profile['geo'] == 0  # drop back to 0 geo after the purchase

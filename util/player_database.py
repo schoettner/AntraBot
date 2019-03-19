@@ -48,12 +48,23 @@ class PlayerDatabase(object):
         :param player_name: the twitch display name of the player
         :return: the dict of the player
         """
+        player_name = player_name.lower()
         player = self.__get_player_by_name(player_name.lower())
         if player is None:
             new_player = self.__get_default_player(player_name)
             self.__add_player(new_player)
             player = self.__get_player_by_name(player_name)
         return player
+
+    def delete_player(self, player_name: str):
+        """
+        delete a player to reset all his values back to defaults
+
+        :param player_name: the player you want to delete
+        """
+        player_name = player_name.lower()
+        query_search_query = {"name": player_name}
+        self.player_table.delete_one(query_search_query)
 
     def update_player_geo(self, player_name: str, player_geo: int):
         """
@@ -63,6 +74,7 @@ class PlayerDatabase(object):
         :param player_geo: the new geo value of the player
         :return:
         """
+        player_name = player_name.lower()
         self.get_or_create_player(player_name)  # make sure the player exists
         query_search_query = {"name": player_name}
         update_command = {"$set": {"geo": player_geo}}
@@ -76,6 +88,7 @@ class PlayerDatabase(object):
         :param player_upgrades: the new upgrades the player should have
         :return:
         """
+        player_name = player_name.lower()
         self.get_or_create_player(player_name)  # make sure the player exists
         query_search_query = {"name": player_name}
         update_command = {"$set": {"upgrades": player_upgrades}}
@@ -89,4 +102,5 @@ class PlayerDatabase(object):
         :param player_name:
         :return:
         """
+        player_name = player_name.lower()
         return {"strength": 10, "name": player_name, "geo": 1, "upgrades": [0]}

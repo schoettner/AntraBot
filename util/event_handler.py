@@ -19,6 +19,17 @@ def get_command(e: Event):
         return None
 
 
+def get_full_message(e: Event):
+    """
+    return the full message that the viewer sent
+
+    :param e: the twitch event
+    :return: the message
+    """
+    message = e.arguments[0]
+    return str(message)
+
+
 def is_superior_user(e: Event):
     """
     checks if the badge list contains either broadcaster, moderator or vip
@@ -54,7 +65,14 @@ def has_badge(e: Event, badge_name: str = 'moderator'):
 
 
 def get_twitch_name(e: Event):
-    return e.tags[2]['value']  # get the display name
+    """
+    get the twitch name of the event sender
+
+    :param e: The twitch event
+    :return: the name of the event sender in lower case
+    """
+    name = e.tags[2]['value']  # get the display name
+    return str(name).lower()
 
 
 def is_sub(e: Event):
