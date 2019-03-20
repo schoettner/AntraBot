@@ -108,6 +108,21 @@ class PlayerDatabase(object):
         update_command = {"$set": {"score": player_score}}
         self.player_table.update_one(query_search_query, update_command)
 
+    def get_leaderboard(self, number_of_players=3):
+        """
+        return the leader board of the people
+        :param number_of_players: number of people to return for the board
+        :return: list of players
+        """
+        board = self.player_table.find(sort=[("score", pymongo.DESCENDING)]).limit(number_of_players)
+        # now this is a list of dicts with players in it.
+        result = []
+        for place, player in enumerate(board):
+            details = '%i. place: %s with score: %i' % (place+1, player['name'], player['score'])
+            result.append(details)
+        print(result)
+        return str(result)
+
     @staticmethod
     def __get_default_player(player_name: str):
         """

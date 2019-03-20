@@ -111,7 +111,7 @@ class AntraBot(irc.bot.SingleServerIRCBot):
             message, upgrades = get_player_stats(player)
             connection.privmsg(self.channel, message + self.get_player_upgrades(upgrades))
         if cmd == "leaderboard":
-            message = "print leader board. tbd."
+            message = self.player_database.get_leaderboard()
             connection.privmsg(self.channel, message)
 
         # boss fight commands
