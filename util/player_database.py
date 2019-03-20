@@ -66,7 +66,7 @@ class PlayerDatabase(object):
         query_search_query = {"name": player_name}
         self.player_table.delete_one(query_search_query)
 
-    def update_player_geo(self, player_name: str, player_geo: int):
+    def set_player_geo(self, player_name: str, player_geo: int):
         """
         set the geo value for a player
 
@@ -80,7 +80,7 @@ class PlayerDatabase(object):
         update_command = {"$set": {"geo": player_geo}}
         self.player_table.update_one(query_search_query, update_command)
 
-    def update_player_upgrades(self, player_name: str, player_upgrades: list):
+    def set_player_upgrades(self, player_name: str, player_upgrades: list):
         """
         set the list of upgrades the player has
 
@@ -94,6 +94,20 @@ class PlayerDatabase(object):
         update_command = {"$set": {"upgrades": player_upgrades}}
         self.player_table.update_one(query_search_query, update_command)
 
+    def set_player_score(self, player_name: str, player_score: int):
+        """
+        set the score of a player
+
+        :param player_name: the twitch display name of the player
+        :param player_score: the new score of the player
+        :return:
+        """
+        player_name = player_name.lower()
+        self.get_or_create_player(player_name)  # make sure the player exists
+        query_search_query = {"name": player_name}
+        update_command = {"$set": {"score": player_score}}
+        self.player_table.update_one(query_search_query, update_command)
+
     @staticmethod
     def __get_default_player(player_name: str):
         """
@@ -103,4 +117,4 @@ class PlayerDatabase(object):
         :return:
         """
         player_name = player_name.lower()
-        return {"strength": 10, "name": player_name, "geo": 1, "upgrades": [0]}
+        return {'strength': 10, 'name': player_name, 'geo': 1, 'score': 0, 'upgrades': [0]}

@@ -50,7 +50,7 @@ class SpecPlayerDatabase:
 
         # create the player and update its geo
         player_database.get_or_create_player(player_name)
-        player_database.update_player_geo(player_name=player_name, player_geo=player_geo)
+        player_database.set_player_geo(player_name=player_name, player_geo=player_geo)
 
         # reload the player
         existing_player = player_database.get_or_create_player(player_name)
@@ -65,7 +65,7 @@ class SpecPlayerDatabase:
         player_geo = 123456789
 
         # update geo without creating the player before
-        player_database.update_player_geo(player_name=player_name, player_geo=player_geo)
+        player_database.set_player_geo(player_name=player_name, player_geo=player_geo)
 
         # reload the player
         existing_player = player_database.get_or_create_player(player_name)
@@ -81,7 +81,7 @@ class SpecPlayerDatabase:
 
         # create the player and update its upgrades
         player_database.get_or_create_player(player_name)
-        player_database.update_player_upgrades(player_name=player_name, player_upgrades=player_upgrades)
+        player_database.set_player_upgrades(player_name=player_name, player_upgrades=player_upgrades)
 
         # reload the player
         existing_player = player_database.get_or_create_player(player_name)
@@ -98,7 +98,7 @@ class SpecPlayerDatabase:
         player_upgrades = [1, 3, 5]
 
         # update the upgrades without creating the player before
-        player_database.update_player_upgrades(player_name=player_name, player_upgrades=player_upgrades)
+        player_database.set_player_upgrades(player_name=player_name, player_upgrades=player_upgrades)
 
         # reload the player
         existing_player = player_database.get_or_create_player(player_name)

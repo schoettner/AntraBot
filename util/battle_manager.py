@@ -7,6 +7,8 @@ class BattleManager(object):
 
     def __init__(self, boss_loader: BossLoader):
         self.boss_loader = boss_loader
+        self.reward_rate = 0.5
+        self.punish_rate = 0.5
         self.lower_border = 0.9  # multiplier on how low your strength can randomize
         self.upper_border = 1.1  # multiplier on how high your strength can randomize
 
@@ -38,6 +40,14 @@ class BattleManager(object):
         actual_strength = randint(int(self.lower_border * strength), int(self.upper_border * strength))
         print("player str: %i, boss str: %i" % (actual_strength, boss_strength))
         if actual_strength > boss_strength:
-            return '%s was defeated. Glory to the mighty warrior.' % boss_name
+            self.reward_player(player, boss_strength)
+            return '%s was defeated. Glory to %s, the mighty warrior.' % (boss_name, player.profile['name'])
         else:
-            return '%s was victorious. You disappear into the void.' % boss_name
+            self.penalize_player(player, boss_strength)
+            return '%s was victorious. %s disappears into the void.' % (boss_name, player.profile['name'])
+
+    def reward_player(self, player: Player, boss_strength: int):
+        player.reward_points(int(boss_strength * self.reward_rate))
+
+    def penalize_player(self, player: Player, boss_strength: int):
+        player.revoke_points(int(boss_strength * self.punish_rate))

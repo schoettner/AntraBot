@@ -62,4 +62,5 @@ def get_player_stats(player: Player):
     name = profile['name']
     strength = player.get_strength()
     geo = profile['geo']
-    return '@%s you have %i Geo, %i total strength and the upgrades: ' % (name, geo, strength), profile['upgrades']
+    score = profile['score']
+    return '@%s you have %i Geo, %i total strength, a score of %i and the upgrades: ' % (name, geo, strength, score), profile['upgrades']

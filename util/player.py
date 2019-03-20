@@ -51,8 +51,8 @@ class Player(object):
             self.profile['upgrades'].remove(requires_id)
 
         # save new upgrades and geo
-        self.player_database.update_player_geo(player_name=self.profile['name'], player_geo=self.profile['geo'])
-        self.player_database.update_player_upgrades(player_name=self.profile['name'], player_upgrades=self.profile['upgrades'])
+        self.player_database.set_player_geo(player_name=self.profile['name'], player_geo=self.profile['geo'])
+        self.player_database.set_player_upgrades(player_name=self.profile['name'], player_upgrades=self.profile['upgrades'])
 
         return "Congratulations, you purchased '%s'! Now get into some bosses with your new obtained power!" % upgrade['name']
 
@@ -76,7 +76,7 @@ class Player(object):
         :param geo: amount of geo you want to add
         """
         self.profile['geo'] += geo
-        self.player_database.update_player_geo(player_name=self.profile['name'], player_geo=self.profile['geo'])
+        self.player_database.set_player_geo(player_name=self.profile['name'], player_geo=self.profile['geo'])
 
     def set_geo(self, geo: int = 10):
         """
@@ -85,4 +85,20 @@ class Player(object):
         :param geo: amount of geo you want to set
         """
         self.profile['geo'] = geo
-        self.player_database.update_player_geo(player_name=self.profile['name'], player_geo=self.profile['geo'])
+        self.player_database.set_player_geo(player_name=self.profile['name'], player_geo=self.profile['geo'])
+
+    def reward_points(self, points: int = 0):
+        # also save PB for strongest boss defeated? but the value is already rounded here...
+        self.profile['score'] += points
+        self.player_database.set_player_score(player_name=self.profile['name'], player_score=self.profile['score'])
+
+        msg = "player %s is rewarded %i points" % (self.profile['name'], self.profile['score'])
+        print(msg)
+
+    def revoke_points(self, points: int = 0):
+        new_score = max(0, self.profile['score'] - points)  # prevent that the score can go negative
+        self.profile['score'] = new_score
+        self.player_database.set_player_score(player_name=self.profile['name'], player_score=new_score)
+
+        msg = "player %s loses %i points" % (self.profile['name'], points)
+        print(msg)
