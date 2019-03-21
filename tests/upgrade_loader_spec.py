@@ -1,4 +1,4 @@
-from util.upgrade_loader import UpgradeLoader
+from upgrade.upgrade_loader import UpgradeLoader
 
 
 class SpecUpgrade:

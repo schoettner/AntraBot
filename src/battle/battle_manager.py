@@ -1,6 +1,7 @@
-from util.boss_loader import BossLoader
-from util.player import Player
 from random import randint
+
+from src.battle.boss_loader import BossLoader
+from src.player.player import Player
 
 
 class BattleManager(object):

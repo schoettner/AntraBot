@@ -1,5 +1,5 @@
-from util.player_database import PlayerDatabase
-from util.upgrade_loader import UpgradeLoader
+from src.player.player_database import PlayerDatabase
+from src.upgrade.upgrade_loader import UpgradeLoader
 
 
 class Player(object):
@@ -52,9 +52,11 @@ class Player(object):
 
         # save new upgrades and geo
         self.player_database.set_player_geo(player_name=self.profile['name'], player_geo=self.profile['geo'])
-        self.player_database.set_player_upgrades(player_name=self.profile['name'], player_upgrades=self.profile['upgrades'])
+        self.player_database.set_player_upgrades(player_name=self.profile['name'],
+                                                 player_upgrades=self.profile['upgrades'])
 
-        return "Congratulations, you purchased '%s'! Now get into some bosses with your new obtained power!" % upgrade['name']
+        return "Congratulations, you purchased '%s'! Now get into some bosses with your new obtained power!" % upgrade[
+            'name']
 
     def get_strength(self):
         """

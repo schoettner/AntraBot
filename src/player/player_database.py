@@ -1,5 +1,6 @@
-import pymongo
 import logging
+
+import pymongo
 
 
 class PlayerDatabase(object):
@@ -118,7 +119,7 @@ class PlayerDatabase(object):
         # now this is a list of dicts with players in it.
         result = []
         for place, player in enumerate(board):
-            details = '%i. place: %s with score: %i' % (place+1, player['name'], player['score'])
+            details = '%i. place: %s with score: %i' % (place + 1, player['name'], player['score'])
             result.append(details)
         print(result)
         return str(result)

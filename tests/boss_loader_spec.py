@@ -1,5 +1,4 @@
-from util.boss_loader import BossLoader
-from util.player import Player
+from battle.boss_loader import BossLoader
 
 
 class SpecBossLoader:

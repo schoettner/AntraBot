@@ -1,6 +1,6 @@
 import pymongo
 
-from util.player_database import PlayerDatabase
+from src.player.player_database import PlayerDatabase
 
 
 class SpecPlayerDatabase:

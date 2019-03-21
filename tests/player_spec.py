@@ -1,6 +1,6 @@
-from util.player_database import PlayerDatabase
-from util.player import Player
-from util.upgrade_loader import UpgradeLoader
+from src.player.player_database import PlayerDatabase
+from src.player.player import Player
+from upgrade.upgrade_loader import UpgradeLoader
 
 
 class SpecPlayer:
