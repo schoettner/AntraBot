@@ -1,3 +1,5 @@
+import logging
+
 from src.player.player_database import PlayerDatabase
 from src.upgrade.upgrade_loader import UpgradeLoader
 
@@ -55,8 +57,10 @@ class Player(object):
         self.player_database.set_player_upgrades(player_name=self.profile['name'],
                                                  player_upgrades=self.profile['upgrades'])
 
-        return "Congratulations, you purchased '%s'! Now get into some bosses with your new obtained power!" % upgrade[
-            'name']
+        message = "Congratulations, you purchased '%s'! Now get into some bosses with your new obtained power!" % \
+                  upgrade['name']
+        logging.info(message)
+        return message
 
     def get_strength(self):
         """
@@ -90,17 +94,28 @@ class Player(object):
         self.player_database.set_player_geo(player_name=self.profile['name'], player_geo=self.profile['geo'])
 
     def reward_points(self, points: int = 0):
+        """
+        increase the number of points for a player
+
+        :param points:
+        """
         # also save PB for strongest boss defeated? but the value is already rounded here...
         self.profile['score'] += points
         self.player_database.set_player_score(player_name=self.profile['name'], player_score=self.profile['score'])
 
         msg = "player %s is rewarded %i points" % (self.profile['name'], self.profile['score'])
-        print(msg)
+        logging.info(msg)
 
     def revoke_points(self, points: int = 0):
+        """
+        decrease the number of points for the player. points can not go lower than 0
+
+        :param points:
+        :return:
+        """
         new_score = max(0, self.profile['score'] - points)  # prevent that the score can go negative
         self.profile['score'] = new_score
         self.player_database.set_player_score(player_name=self.profile['name'], player_score=new_score)
 
         msg = "player %s loses %i points" % (self.profile['name'], points)
-        print(msg)
+        logging.info(msg)

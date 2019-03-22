@@ -8,8 +8,8 @@ class BattleManager(object):
 
     def __init__(self, boss_loader: BossLoader):
         self.boss_loader = boss_loader
-        self.reward_rate = 0.5
-        self.punish_rate = 0.5
+        self.reward_rate = 0.5  # multiplier for points gained for defeating a boss (reward_rate * boss_strength)
+        self.punish_rate = 0.5  # multiplier for points lost for a boss winning (punish_rate * boss_strength)
         self.lower_border = 0.9  # multiplier on how low your strength can randomize
         self.upper_border = 1.1  # multiplier on how high your strength can randomize
 
@@ -48,7 +48,18 @@ class BattleManager(object):
             return '%s was victorious. %s disappears into the void.' % (boss_name, player.profile['name'])
 
     def reward_player(self, player: Player, boss_strength: int):
+        """
+        reward a player for winning a boss fight.
+
+        :param player:
+        :param boss_strength:
+        """
         player.reward_points(int(boss_strength * self.reward_rate))
 
     def penalize_player(self, player: Player, boss_strength: int):
+        """
+        punish a player for losing to a boss
+        :param player:
+        :param boss_strength:
+        """
         player.revoke_points(int(boss_strength * self.punish_rate))

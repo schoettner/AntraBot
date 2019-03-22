@@ -43,7 +43,6 @@ class BattleCommandHandler(CommandHandler):
         if cmd == "bot":
             message = "AntraBot is up and running. Getting more powerful. Check " \
                       "https://antrabot.fandom.com/wiki/How_to_play for more details how to play."
-            # self.message_handler.send_public_message(message)
             self.message_handler.send_public_message(message)
         if cmd == "commands":
             message = "Check https://antrabot.fandom.com/wiki/Commands for more details."
@@ -112,9 +111,9 @@ class BattleCommandHandler(CommandHandler):
         # special commands
         elif cmd == "antra":
             print(e)
-            self.message_handler.send_private_message(message='hello from antrabot', target='Antrazith')
-            message = "This is a debug command for the dark lord himself. Do not worry about it."
-            self.message_handler.send_public_message(message)
+            self.message_handler.send_private_message(message='hello from antrabot', target='antrazith')
+            # message = "This is a debug command for the dark lord himself. Do not worry about it."
+            # self.message_handler.send_public_message(message)
 
     def schedule_geo(self):
         """

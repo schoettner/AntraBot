@@ -24,6 +24,7 @@ class AntraBot(irc.bot.SingleServerIRCBot):
         print('Connecting to ' + server + ' on port ' + str(port) + '...')
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port, 'oauth:'+token)], username, username)
 
+        # create the command handlers
         self.battle_command_handler = BattleCommandHandler(self.connection, channel)
         self.vys_command_handler = VysCommandHandler(self.connection, channel)
 
@@ -69,7 +70,7 @@ class AntraBot(irc.bot.SingleServerIRCBot):
 
 def main():
     if len(sys.argv) != 5:
-        print("Usage: twitchbot <username> <client id> <token> <channel>")
+        print("Usage: python3 antra_bot.py <username> <client id> <token> <channel>")
         sys.exit(1)
 
     username = sys.argv[1]

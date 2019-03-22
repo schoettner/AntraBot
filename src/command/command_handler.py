@@ -8,7 +8,7 @@ class CommandHandler(object):
     def __init__(self, connection: ServerConnection, channel: str):
         self.connection = connection
         self.channel = channel
-        target = '#%s' % channel
+        target = '#%s' % channel  # add '#' in front of the channel to enter the regular public room
         self.message_handler = MessageHandler(connection=connection, channel=target)
 
     def public_command(self, e: Event, cmd: str):
@@ -41,5 +41,11 @@ class CommandHandler(object):
 
     @staticmethod
     def is_sub(e: Event):
+        """
+        check if the sender of the event is a subscriber
+
+        :param e:
+        :return:
+        """
         is_subscribed = e.tags[8]['value']  # is subbed this is 1 (as str)
         return is_subscribed == '1'

@@ -30,5 +30,7 @@ class MessageHandler(object):
         :param message: the message you want to send
         :param target: the twitch player nick to receive the whisper
         """
-        self.connection.privmsg(target=target, text=message)
-        return None
+        new_message = '/w %s %s' % (target, message)
+        print(new_message)
+        # todo fix this. does not work.
+        self.connection.privmsg(target=self.channel, text=new_message)
