@@ -13,6 +13,9 @@ from src.upgrade.upgrade_loader import UpgradeLoader
 
 
 class BattleCommandHandler(CommandHandler):
+    """
+    handles all battle related commands
+    """
 
     def __init__(self, connection: ServerConnection, channel: str, geo_reward: int = 10):
         super().__init__(connection, channel)
@@ -25,7 +28,7 @@ class BattleCommandHandler(CommandHandler):
         self.player_database = PlayerDatabase()
         self.upgrade_loader = UpgradeLoader()
 
-        cache_time = 10  # time to cache the last message of someone
+        cache_time = 60  # time to cache the last message of someone
         self.cache = ExpiringDict(max_len=100, max_age_seconds=cache_time)
 
         # wait for the connection to be established than start the geo timer

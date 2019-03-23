@@ -11,7 +11,7 @@ $ pip3 install irc
 $ pip3 install pymongo
 $ pip3 install expiringdict
 ```
-I used **virtualenv** to manage the pyhton environment
+I used **virtualenv** to manage the python environment
 
 ### Get an token for the bot
 |info|detail|
