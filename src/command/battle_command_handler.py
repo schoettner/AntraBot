@@ -1,5 +1,6 @@
 from threading import Timer
 
+from expiringdict import ExpiringDict
 from irc.client import Event, ServerConnection
 
 from src.battle.battle_manager import BattleManager
@@ -13,40 +14,35 @@ from src.upgrade.upgrade_loader import UpgradeLoader
 
 class BattleCommandHandler(CommandHandler):
 
-    def __init__(self, connection: ServerConnection, channel: str):
+    def __init__(self, connection: ServerConnection, channel: str, geo_reward: int = 10):
         super().__init__(connection, channel)
 
         self.enable_geo_timer = True
         self.geo_time = 600  # seconds until ppl get geo
-        self.geo_reward = 10  # amount of geo people get every tick
+        self.geo_reward = geo_reward  # amount of geo people get every tick
         self.boss_loader = BossLoader()
         self.battle_manager = BattleManager(self.boss_loader)
         self.player_database = PlayerDatabase()
         self.upgrade_loader = UpgradeLoader()
 
+        cache_time = 10  # time to cache the last message of someone
+        self.cache = ExpiringDict(max_len=100, max_age_seconds=cache_time)
+
         # wait for the connection to be established than start the geo timer
         if self.enable_geo_timer:
+            print('starting geo timer')
             Timer(interval=self.geo_time, function=self.schedule_geo).start()
 
         print('battle command handler created')
 
     def public_command(self, e: Event, cmd: str):
-        """
-        commands that should be available for everyone.
-        the message for the command is directly printed to twitch chat
 
-        :param e: the chat event. containing arguments and tags
-        :param cmd: the command as string
-        :return: None
-        """
-        # general commands
-        if cmd == "bot":
-            message = "AntraBot is up and running. Getting more powerful. Check " \
-                      "https://antrabot.fandom.com/wiki/How_to_play for more details how to play."
-            self.message_handler.send_public_message(message)
-        if cmd == "commands":
-            message = "Check https://antrabot.fandom.com/wiki/Commands for more details."
-            self.message_handler.send_public_message(message)
+        # prevent people spam
+        name = self.get_twitch_name(e)
+        if self.cache.get(name) is not None:
+            print('viewer %s is still locked' % name)
+            return
+        self.cache[name] = 'locked'
 
         # stats commands
         if cmd == "stats":
@@ -54,7 +50,7 @@ class BattleCommandHandler(CommandHandler):
             stats, upgrades = get_player_stats(player)
             message = stats + self.get_player_upgrades(upgrades)
             self.message_handler.send_public_message(message)
-        if cmd == "leaderboard":
+        elif cmd == "leaderboard":
             message = self.player_database.get_leaderboard()
             self.message_handler.send_public_message(message)
 
@@ -91,14 +87,7 @@ class BattleCommandHandler(CommandHandler):
             self.message_handler.send_public_message(message)
 
     def special_command(self, e: Event, cmd: str):
-        """
-        commands that are only available super users (broadcaster,mod,vip)
-        the message for the command is directly printed to twitch chat
-
-        :param e: the chat event. containing arguments and tags
-        :param cmd: the command as string
-        """
-        # give geo to the people
+        # geo commands
         if cmd == "geo":
             self.grant_geo()
         if cmd == "geoset":
@@ -107,13 +96,6 @@ class BattleCommandHandler(CommandHandler):
         if cmd == "reset":
             message = self.reset_player(e)
             self.message_handler.send_public_message(message)
-
-        # special commands
-        elif cmd == "antra":
-            print(e)
-            self.message_handler.send_private_message(message='hello from antrabot', target='antrazith')
-            # message = "This is a debug command for the dark lord himself. Do not worry about it."
-            # self.message_handler.send_public_message(message)
 
     def schedule_geo(self):
         """
@@ -126,14 +108,13 @@ class BattleCommandHandler(CommandHandler):
         """
         give geo to everyone who is in chat
         """
-        c = self.connection
         viewers = get_viewers(self.channel)
         for viewer in viewers:
             player = self.get_player_by_name(viewer)
             player.add_geo(geo=self.geo_reward)
         message = 'All viewers in chat have been blessed by the gods. You all gained %i Geo. Use !bot to see ' \
                   'how to play.' % self.geo_reward
-        c.privmsg(self.channel, message)
+        self.message_handler.send_public_message(message)
 
     def set_player_geo(self, event: Event):
         """

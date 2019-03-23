@@ -1,3 +1,4 @@
+from expiringdict import ExpiringDict
 from irc.client import ServerConnection
 
 
@@ -5,8 +6,10 @@ class MessageHandler(object):
 
     def __init__(self, connection: ServerConnection, channel: str):
         self.connection = connection
+        # self.whisper_connection = ServerConnection()
         self.channel = channel
-        self.cooldown = 60  # cooldown time in seconds
+        self.cool_down = 60  # cool_down time in seconds before sending a message to the
+        self.cache = ExpiringDict(max_len=100, max_age_seconds=10)
 
     def send_public_message(self, message: str):
         """
@@ -22,7 +25,12 @@ class MessageHandler(object):
         :param message:
         :param target:
         """
-        self.connection.privmsg(self.channel, message)
+        if self.cache.get(target) is None:
+            self.cache[target] = 'locked'
+            self.connection.privmsg(self.channel, message)
+            return
+        else:
+            print('chatter %s is still on cooldown' % target)
 
     def send_private_message(self, message: str, target: str):
         """
@@ -30,7 +38,10 @@ class MessageHandler(object):
         :param message: the message you want to send
         :param target: the twitch player nick to receive the whisper
         """
-        new_message = '/w %s %s' % (target, message)
-        print(new_message)
         # todo fix this. does not work.
-        self.connection.privmsg(target=self.channel, text=new_message)
+        # self.connection.join('jtv')
+        # self.connection.send_items("PRIVMSG #jtv :.w " + target + " " + message)
+
+        new_message = '.w %s %s' % (target, message)
+        print(new_message + "\r\n")
+        self.connection.privmsg(target='jtv', text=new_message)

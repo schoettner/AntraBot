@@ -12,9 +12,24 @@ class CommandHandler(object):
         self.message_handler = MessageHandler(connection=connection, channel=target)
 
     def public_command(self, e: Event, cmd: str):
+        """
+        commands that should be available for everyone.
+        the message for the command is directly printed to twitch chat
+
+        :param e: the chat event. containing arguments and tags
+        :param cmd: the command as string
+        :return: None
+        """
         pass
 
     def special_command(self, e: Event, cmd: str):
+        """
+        commands that are only available super users (broadcaster,mod,vip)
+        the message for the command is directly printed to twitch chat
+
+        :param e: the chat event. containing arguments and tags
+        :param cmd: the command as string
+        """
         pass
 
     @staticmethod
