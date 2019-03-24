@@ -1,7 +1,5 @@
 language: python
 python: 3.5
-services:
-  - docker
 install:
   - pip install -r requirements.txt # install libs to run tests
 script:
@@ -10,4 +8,6 @@ deploy:
   provider: heroku
   app: antrabot
   api_key: $HEROKU_AUTH_TOKEN
-  run: "heroku run ./run.sh"
+#  run: "heroku run ./start-bot.sh"
+after_deploy:
+  - ./start-bot.sh
