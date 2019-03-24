@@ -24,7 +24,7 @@ $ pip3 install -r requirements.txt
 ```
 Start the bot
 ```sh
-python3 antra_bot.py <username> <client id> <token> <channel>
+python3 antra_bot.py <username> <client id> <token> <channel> <mongo_uri>
 ```
 
 
