@@ -10,7 +10,7 @@ deploy:
   provider: heroku
   app: antrabot
   api_key: $HEROKU_AUTH_TOKEN
-  run: "heroku run python3 ./antra_bot.py $TWITCH_USERNAME $CLIENT_ID $TWITCH_TOKEN $CHANNEL"
+  run: "heroku run run.sh"
 #jobs:
 #  include:
 #    - stage: "install requirements"
