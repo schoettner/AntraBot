@@ -17,13 +17,19 @@ jobs:
     - stage: "build container"
       script: docker build -t antra-bot .
     - stage: "deploy container"
-      deploy:
-        provider: heroku
-        app: antrabot
-        api_key: $HEROKU_AUTH_TOKEN
-        run: docker run -e TWITCH_USERNAME=$TWITCH_USERNAME -e CLIENT_ID=$CLIENT_ID -e TWITCH_TOKEN=$TWITCH_TOKEN -e CHANNEL=$CHANNEL antra-bot
-        on:
-          branch: master
+      script:
+        - docker login -u _ -p "$HEROKU_AUTH_TOKEN"  registry.heroku.com
+        - docker push registry.heroku.com/antra-bot
+    - stage: "start container"
+      script: heroku run --app antra-bot -e TWITCH_USERNAME=$TWITCH_USERNAME -e CLIENT_ID=$CLIENT_ID -e TWITCH_TOKEN=$TWITCH_TOKEN -e CHANNEL=$CHANNEL
+#    - stage: "deploy container"
+#      deploy:
+#        provider: heroku
+#        app: antrabot
+#        api_key: $HEROKU_AUTH_TOKEN
+#        run: docker run -e TWITCH_USERNAME=$TWITCH_USERNAME -e CLIENT_ID=$CLIENT_ID -e TWITCH_TOKEN=$TWITCH_TOKEN -e CHANNEL=$CHANNEL antra-bot
+#        on:
+#          branch: master
 #notifications:
 #  slack:
 #    on_success: change
