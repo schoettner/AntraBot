@@ -17,7 +17,7 @@ class BattleCommandHandler(CommandHandler):
     handles all battle related commands
     """
 
-    def __init__(self, connection: ServerConnection, channel: str, geo_reward: int = 10):
+    def __init__(self, connection: ServerConnection, channel: str, geo_reward: int = 10, mongo_uri: str = 'mongodb://localhost:27017/'):
         super().__init__(connection, channel)
 
         self.enable_geo_timer = True
@@ -25,7 +25,7 @@ class BattleCommandHandler(CommandHandler):
         self.geo_reward = geo_reward  # amount of geo people get every tick
         self.boss_loader = BossLoader()
         self.battle_manager = BattleManager(self.boss_loader)
-        self.player_database = PlayerDatabase()
+        self.player_database = PlayerDatabase(mongo_uri)
         self.upgrade_loader = UpgradeLoader()
 
         cache_time = 60  # time to cache the last message of someone

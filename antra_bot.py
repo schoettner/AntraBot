@@ -11,7 +11,7 @@ from src.util.bot_utils import get_channel_id, get_command, is_superior_user
 
 class AntraBot(irc.bot.SingleServerIRCBot):
 
-    def __init__(self, username, client_id, token, channel):
+    def __init__(self, username, client_id, token, channel, mongo_uri):
         self.client_id = client_id
         self.token = token
         self.channel = '#' + channel
@@ -27,7 +27,7 @@ class AntraBot(irc.bot.SingleServerIRCBot):
 
         # create the command handlers
         self.general_command_handler = GeneralCommandHandler(self.connection, channel)
-        # self.battle_command_handler = BattleCommandHandler(self.connection, channel, 50)
+        self.battle_command_handler = BattleCommandHandler(self.connection, channel, 50, mongo_uri)
         self.vys_command_handler = VysCommandHandler(self.connection, channel)
 
     def on_welcome(self, c: ServerConnection, e: Event):
@@ -61,29 +61,31 @@ class AntraBot(irc.bot.SingleServerIRCBot):
 
         # execute public command
         self.general_command_handler.public_command(e, cmd)
-        # self.battle_command_handler.public_command(e, cmd)
+        self.battle_command_handler.public_command(e, cmd)
         self.vys_command_handler.public_command(e, cmd)
 
         # execute the super commands
         allowed = is_superior_user(e)
         if allowed is True:
             self.general_command_handler.special_command(e, cmd)
-            # self.battle_command_handler.special_command(e, cmd)
+            self.battle_command_handler.special_command(e, cmd)
             self.vys_command_handler.special_command(e, cmd)
 
 
 def main():
-    if len(sys.argv) != 5:
-        print("Usage: python3 antra_bot.py <username> <client id> <token> <channel>")
+    print(len(sys.argv))
+    if len(sys.argv) != 6:
+        print("Usage: python3 antra_bot.py <username> <client id> <token> <channel> <mongo_uri>")
         sys.exit(1)
 
     username = sys.argv[1]
     client_id = sys.argv[2]
     token = sys.argv[3]
     channel = sys.argv[4]
+    mongo_uri = sys.argv[5]
 
     print("Starting bot with username: %s, clinet: %s, token: %s, channel: %s" % (username, client_id, token, channel))
-    bot = AntraBot(username, client_id, token, channel)
+    bot = AntraBot(username, client_id, token, channel, mongo_uri)
     bot.start()
 
 

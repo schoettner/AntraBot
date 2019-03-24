@@ -8,4 +8,4 @@ deploy:
   provider: heroku
   app: antrabot
   api_key: $HEROKU_AUTH_TOKEN
-  run: "./start-bot.sh &"
+  run: "./start-bot.sh"
