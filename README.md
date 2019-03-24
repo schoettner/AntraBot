@@ -1,4 +1,4 @@
-# AntraBot #
+# AntraBot [![Build Status](https://travis-ci.org/schoettner/AntraBot.svg?branch=master)](https://travis-ci.org/schoettner/AntraBot)
 Simple chat bot for experimenting with twitch icr client. This project is also used to teach coding
 by example.The bot should perform fun tasks that should be helpful.
 
@@ -42,6 +42,6 @@ python3 antra_bot.py <username> <client id> <token> <channel>
 
 
 ### References ###
-[Example-Code from Amazon](https://github.com/twitchdev/chat-samples/tree/master/python)
-[AntraBot Wiki](https://antrabot.fandom.com/wiki/AntraBot_Wiki#)
-[Twitch IRC Guide](https://dev.twitch.tv/docs/irc/guide/)
+[Example-Code from Amazon](https://github.com/twitchdev/chat-samples/tree/master/python)  
+[AntraBot Wiki](https://antrabot.fandom.com/wiki/AntraBot_Wiki#)  
+[Twitch IRC Guide](https://dev.twitch.tv/docs/irc/guide/)  
