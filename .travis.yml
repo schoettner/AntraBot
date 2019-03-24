@@ -1,8 +1,14 @@
 language: python
 python: 3.5
-# command to install dependencies
-#install:
-#  - pip install -r requirements.txt
-# command to run tests
+services:
+  - docker
+install:
+  - pip install -r requirements.txt
 script:
-  - PYTHONPATH=./ pytest -s
+  - PYTHONPATH=./ pytest -s # run unit tests
+  - docker build -t antra-bot . # build docker container
+
+#notifications:
+#  slack:
+#    on_success: change
+#    on_failure: always

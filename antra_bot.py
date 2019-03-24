@@ -27,7 +27,7 @@ class AntraBot(irc.bot.SingleServerIRCBot):
 
         # create the command handlers
         self.general_command_handler = GeneralCommandHandler(self.connection, channel)
-        self.battle_command_handler = BattleCommandHandler(self.connection, channel, 50)
+        # self.battle_command_handler = BattleCommandHandler(self.connection, channel, 50)
         self.vys_command_handler = VysCommandHandler(self.connection, channel)
 
     def on_welcome(self, c: ServerConnection, e: Event):
@@ -61,14 +61,14 @@ class AntraBot(irc.bot.SingleServerIRCBot):
 
         # execute public command
         self.general_command_handler.public_command(e, cmd)
-        self.battle_command_handler.public_command(e, cmd)
+        # self.battle_command_handler.public_command(e, cmd)
         self.vys_command_handler.public_command(e, cmd)
 
         # execute the super commands
         allowed = is_superior_user(e)
         if allowed is True:
             self.general_command_handler.special_command(e, cmd)
-            self.battle_command_handler.special_command(e, cmd)
+            # self.battle_command_handler.special_command(e, cmd)
             self.vys_command_handler.special_command(e, cmd)
 
 
@@ -82,6 +82,7 @@ def main():
     token = sys.argv[3]
     channel = sys.argv[4]
 
+    print("Starting bot with username: %s, clinet: %s, token: %s, channel: %s" % (username, client_id, token, channel))
     bot = AntraBot(username, client_id, token, channel)
     bot.start()
 

@@ -2,3 +2,4 @@ pytest
 irc
 pymongo
 expiringdict
+requests
