@@ -83,7 +83,6 @@ def main():
     channel = sys.argv[4]
     mongo_uri = sys.argv[5]
 
-    print("Starting bot with username: %s, clinet: %s, token: %s, channel: %s" % (username, client_id, token, channel))
     bot = AntraBot(username, client_id, token, channel, mongo_uri)
     bot.start()
 
