@@ -7,9 +7,7 @@ You can find end-user documentation on [Fandom](https://antrabot.fandom.com/wiki
 ### Requirements
 The bot is written with python 3.5
 ```sh
-$ pip3 install irc
-$ pip3 install pymongo
-$ pip3 install expiringdict
+$ pip3 install -r requirements.txt
 ```
 I used **virtualenv** to manage the python environment
 

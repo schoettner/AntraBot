@@ -3,7 +3,7 @@ import pymongo
 from src.player.player_database import PlayerDatabase
 
 
-class SpecPlayerDatabase:
+class DisabledSpecPlayerDatabase:
     """
     !!!! CAUTION !!!!
     to run this test it is mandatory to have an mongo container running!

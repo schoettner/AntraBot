@@ -1,4 +1,4 @@
-from battle.boss_loader import BossLoader
+from src.battle.boss_loader import BossLoader
 
 
 class SpecBossLoader:

@@ -1,9 +1,9 @@
 from src.player.player_database import PlayerDatabase
 from src.player.player import Player
-from upgrade.upgrade_loader import UpgradeLoader
+from src.upgrade.upgrade_loader import UpgradeLoader
 
 
-class SpecPlayer:
+class DisabledSpecPlayer:
 
     # def test_dummy_failure(self):
     #     assert False

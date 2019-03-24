@@ -1,5 +1,5 @@
-from battle.battle_manager import BattleManager
-from battle.boss_loader import BossLoader
+from src.battle.battle_manager import BattleManager
+from src.battle.boss_loader import BossLoader
 from src.player.player import Player
 
 
@@ -9,13 +9,13 @@ class SpecBattleManager:
         player = self.given_default_player()
         battle_manager = self.given_default_battle_manager()
         fight_results = battle_manager.fight_boss(player=player, boss_id=0)
-        assert fight_results == 'Training Dummy was defeated. Glory to the mighty warrior.'
+        assert fight_results == 'Training Dummy was defeated. Glory to dummy, the mighty warrior.'
 
     def test_player_defeat(self):
         player = self.given_default_player()
         battle_manager = self.given_default_battle_manager()
         fight_results = battle_manager.fight_boss(player=player, boss_id=45)
-        assert fight_results == 'Absolute Radiance was victorious. You disappear into the void.'
+        assert fight_results == 'Absolute Radiance was victorious. dummy disappears into the void.'
 
     def test_fight_random_boss(self):
         player = self.given_default_player()
@@ -54,3 +54,12 @@ class PlayerMock(Player):
 
     def get_strength(self):
         return 10
+
+    def set_player_score(self, name: str, score: int):
+        pass
+
+    def reward_points(self, points: int = 0):
+        pass
+
+    def revoke_points(self, points: int = 0):
+        pass
