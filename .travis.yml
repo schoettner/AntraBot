@@ -8,6 +8,14 @@ script:
   - PYTHONPATH=./ pytest -s # run unit tests
   - docker build -t antra-bot . # build docker container
 
+jobs:
+  include:
+    - stage: "install requirements"
+      script: pip install -r requirements.txt
+    - stage: "unit tests"
+      script: PYTHONPATH=./ pytest -s
+    - stage: "build container"
+      script: docker build -t antra-bot .
 #notifications:
 #  slack:
 #    on_success: change
