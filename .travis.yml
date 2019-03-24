@@ -4,8 +4,8 @@ install:
   - pip install -r requirements.txt # install libs to run tests
 script:
   - PYTHONPATH=./ pytest -s # run unit tests
-deploy:
-  provider: heroku
-  app: antrabot
-  api_key: $HEROKU_AUTH_TOKEN
-  run: "./start-bot.sh &"
+#deploy:
+#  provider: heroku
+#  app: antrabot
+#  api_key: $HEROKU_AUTH_TOKEN
+#  run: "./start-bot.sh &"

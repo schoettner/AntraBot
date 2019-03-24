@@ -3,7 +3,7 @@ from src.player.player import Player
 from src.upgrade.upgrade_loader import UpgradeLoader
 
 
-class DisabledSpecPlayer:
+class SpecPlayer:
 
     # def test_dummy_failure(self):
     #     assert False
