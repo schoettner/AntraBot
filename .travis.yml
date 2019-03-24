@@ -16,6 +16,11 @@ jobs:
       script: PYTHONPATH=./ pytest -s
     - stage: "build container"
       script: docker build -t antra-bot .
+    - stage: "deploy container"
+      deploy:
+        provider: heroku
+        app: antrabot
+        api_key: $HEROKU_AUTH_TOKEN
 #notifications:
 #  slack:
 #    on_success: change
