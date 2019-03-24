@@ -73,7 +73,6 @@ class AntraBot(irc.bot.SingleServerIRCBot):
 
 
 def main():
-    print(len(sys.argv))
     if len(sys.argv) != 6:
         print("Usage: python3 antra_bot.py <username> <client id> <token> <channel> <mongo_uri>")
         sys.exit(1)

@@ -17,15 +17,19 @@ class BattleCommandHandler(CommandHandler):
     handles all battle related commands
     """
 
-    def __init__(self, connection: ServerConnection, channel: str, geo_reward: int = 10, mongo_uri: str = 'mongodb://localhost:27017/'):
+    def __init__(self, connection: ServerConnection,
+                 channel: str,
+                 geo_reward: int = 10,
+                 mongo_uri: str = 'mongodb://localhost:27017/antrabot'):
         super().__init__(connection, channel)
+        database = str(mongo_uri).split(sep='/')[-1:][0]
 
         self.enable_geo_timer = True
         self.geo_time = 600  # seconds until ppl get geo
         self.geo_reward = geo_reward  # amount of geo people get every tick
         self.boss_loader = BossLoader()
         self.battle_manager = BattleManager(self.boss_loader)
-        self.player_database = PlayerDatabase(mongo_uri)
+        self.player_database = PlayerDatabase(connection_url=mongo_uri, database_name=database)
         self.upgrade_loader = UpgradeLoader()
 
         cache_time = 60  # time to cache the last message of someone
