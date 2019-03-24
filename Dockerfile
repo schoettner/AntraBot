@@ -13,9 +13,4 @@ RUN ls -l
 # install requirements
 RUN pip install -r requirements.txt
 
-ENV TWITCH_USERNAME=""
-ENV CLIENT_ID=""
-ENV TWITCH_TOKEN=""
-ENV CHANNEL=""
-
-CMD python -u ./antra_bot.py $TWITCH_USERNAME $CLIENT_ID $TWITCH_TOKEN $CHANNEL
+CMD python -u ./antra_bot.py $TWITCH_USERNAME $CLIENT_ID $TWITCH_TOKEN $CHANNEL $MONGODB_URI

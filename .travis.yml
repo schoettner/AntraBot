@@ -1,11 +1,19 @@
 language: python
 python: 3.5
-install:
-  - pip install -r requirements.txt # install libs to run tests
-script:
-  - PYTHONPATH=./ pytest -s # run unit tests
-deploy:
-  provider: heroku
-  app: antrabot
-  api_key: $HEROKU_AUTH_TOKEN
-  run: "./start-bot.sh &"
+services:
+  - docker
+jobs:
+  include:
+    - stage: "install requirements"
+      script: pip install -r requirements.txt
+    - stage: "unit tests"
+      script: PYTHONPATH=./ pytest -s
+    - stage: "build container"
+      script: docker build -t registry.heroku.com/antra-bot .
+    - stage: "deploy container"
+      script:
+        - docker login -u _ -p "$HEROKU_AUTH_TOKEN"  registry.heroku.com
+        - docker push registry.heroku.com/antra-bot
+    - stage: "start container"
+      script: heroku run --app registry.heroku.com/antra-bot -e TWITCH_USERNAME=$TWITCH_USERNAME -e CLIENT_ID=$CLIENT_ID -e TWITCH_TOKEN=$TWITCH_TOKEN -e CHANNEL=$CHANNEL -e MONGODB_URI=$MONGODB_URI
+
