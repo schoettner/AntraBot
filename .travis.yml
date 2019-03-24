@@ -27,7 +27,7 @@ jobs:
         provider: heroku
         app: antrabot
         api_key: $HEROKU_AUTH_TOKEN
-        run: python3 antra-bot.py $TWITCH_USERNAME $CLIENT_ID $TWITCH_TOKEN $CHANNEL
+        run: python3 ./antra_bot.py $TWITCH_USERNAME $CLIENT_ID $TWITCH_TOKEN $CHANNEL
 #        run: docker run -e TWITCH_USERNAME=$TWITCH_USERNAME -e CLIENT_ID=$CLIENT_ID -e TWITCH_TOKEN=$TWITCH_TOKEN -e CHANNEL=$CHANNEL antra-bot
 #        on:
 #          branch: master
