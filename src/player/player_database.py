@@ -16,7 +16,7 @@ class PlayerDatabase(object):
         self.mongo_client = pymongo.MongoClient(connection_url)
         self.database = self.mongo_client[database_name]  # create the database
         self.player_table = self.database['player']  # create the document / table
-        logging.debug(self.mongo_client.list_database_names())
+        # logging.debug(self.mongo_client.list_database_names())
 
     def __add_player(self, player: dict):
         """
