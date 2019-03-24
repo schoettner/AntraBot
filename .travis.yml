@@ -15,7 +15,7 @@ jobs:
     - stage: "unit tests"
       script: PYTHONPATH=./ pytest -s
     - stage: "build container"
-      script: docker build -t antra-bot .
+      script: docker build -t registry.heroku.com/antra-bot .
     - stage: "deploy container"
       script:
         - docker login -u _ -p "$HEROKU_AUTH_TOKEN"  registry.heroku.com
