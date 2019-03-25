@@ -1,22 +1,20 @@
-import logging
-
 import pymongo
+from pymongo import MongoClient
 
 
 class PlayerDatabase(object):
 
-    def __init__(self, connection_url: str = 'mongodb://localhost:27017/', database_name: str = 'antrabot'):
+    def __init__(self, mongo_client: MongoClient, database_name: str = 'antrabot'):
         """
         connect to a mongo database. if the database does not exist yet, create it
         with the name of the database it is possible to create an own for each channel or testing
 
-        :param connection_url: the url to the mongoDB. use localhost if running on docker container
+        :param mongo_client: mongo_client
         :param database_name: the name of the database
         """
-        self.mongo_client = pymongo.MongoClient(connection_url)
+        self.mongo_client = mongo_client
         self.database = self.mongo_client[database_name]  # create the database
         self.player_table = self.database['player']  # create the document / table
-        # logging.debug(self.mongo_client.list_database_names())
 
     def __add_player(self, player: dict):
         """

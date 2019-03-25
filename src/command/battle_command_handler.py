@@ -4,12 +4,11 @@ from expiringdict import ExpiringDict
 from irc.client import Event, ServerConnection
 
 from src.battle.battle_manager import BattleManager
-from src.battle.boss_loader import BossLoader
-from src.player.player_database import PlayerDatabase
 from src.command.command_handler import CommandHandler
 from src.player.player import Player
-from src.util.bot_utils import get_viewers, get_player_stats
+from src.player.player_database import PlayerDatabase
 from src.upgrade.upgrade_loader import UpgradeLoader
+from src.util.bot_utils import get_viewers, get_player_stats
 
 
 class BattleCommandHandler(CommandHandler):
@@ -17,20 +16,23 @@ class BattleCommandHandler(CommandHandler):
     handles all battle related commands
     """
 
-    def __init__(self, connection: ServerConnection,
+    def __init__(self,
+                 connection: ServerConnection,
                  channel: str,
+                 battle_manager: BattleManager,
+                 player_database: PlayerDatabase,
+                 upgrade_loader: UpgradeLoader,
                  geo_reward: int = 10,
-                 mongo_uri: str = 'mongodb://localhost:27017/antrabot'):
+                 ):
         super().__init__(connection, channel)
-        database = str(mongo_uri).split(sep='/')[-1:][0]
+
+        self.battle_manager = battle_manager
+        self.player_database = player_database
+        self.upgrade_loader = upgrade_loader
 
         self.enable_geo_timer = True
         self.geo_time = 600  # seconds until ppl get geo
         self.geo_reward = geo_reward  # amount of geo people get every tick
-        self.boss_loader = BossLoader()
-        self.battle_manager = BattleManager(self.boss_loader)
-        self.player_database = PlayerDatabase(connection_url=mongo_uri, database_name=database)
-        self.upgrade_loader = UpgradeLoader()
 
         cache_time = 60  # time to cache the last message of someone
         self.cache = ExpiringDict(max_len=100, max_age_seconds=cache_time)
@@ -39,8 +41,6 @@ class BattleCommandHandler(CommandHandler):
         if self.enable_geo_timer:
             print('starting geo timer')
             Timer(interval=self.geo_time, function=self.schedule_geo).start()
-
-        print('battle command handler created')
 
     def public_command(self, e: Event, cmd: str):
 

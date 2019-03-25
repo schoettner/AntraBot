@@ -1,6 +1,6 @@
-from src.command.vys_command_handler import VysCommandHandler
 from mocks.event_mock import EventMock
 from mocks.message_handler_mock import MessageHandlerMock
+from src.command.vys_command_handler import VysCommandHandler
 
 
 class SpecVysCommandHandler:

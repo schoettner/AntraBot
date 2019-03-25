@@ -1,5 +1,6 @@
-pytest
 irc
 pymongo
 expiringdict
 requests
+pytest
+mongomock

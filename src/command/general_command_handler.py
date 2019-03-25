@@ -1,5 +1,6 @@
-from src.command.command_handler import CommandHandler
 from irc.client import Event, ServerConnection
+
+from src.command.command_handler import CommandHandler
 
 
 class GeneralCommandHandler(CommandHandler):

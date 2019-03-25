@@ -1,12 +1,9 @@
-from tests.mocks.upgrade_loader_mock import UpgradeLoaderMock
-from src.player.player_database import PlayerDatabase
 from src.player.player import Player
+from tests.mocks.player_database_mock import DatabaseMock
+from tests.mocks.upgrade_loader_mock import UpgradeLoaderMock
 
 
 class SpecPlayer:
-
-    # def test_dummy_failure(self):
-    #     assert False
 
     def test_total_strength(self):
         player = self.given_default_player()
@@ -91,13 +88,5 @@ class SpecPlayer:
         return loader
 
 
-class DatabaseMock(PlayerDatabase):
 
-    def set_player_geo(self, player_name: str, player_geo: int):
-        print('update geo was called')
-        pass
-
-    def set_player_upgrades(self, player_name: str, player_upgrades: list):
-        print('update upgrades was called')
-        pass
 

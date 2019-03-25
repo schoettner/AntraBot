@@ -1,16 +1,16 @@
-import pymongo
+import mongomock
 
 from src.player.player_database import PlayerDatabase
 
 
-class DisabledSpecPlayerDatabase:
+class SpecPlayerDatabase:
     """
     !!!! CAUTION !!!!
     to run this test it is mandatory to have an mongo container running!
     use docker-compose up to make sure it is available
     """
 
-    connection_url = 'mongodb://localhost:27017/'
+    mongo_client = mongomock.MongoClient()
     database_name = 'antrabot_testing'
 
     # def test_dummy(self):
@@ -109,10 +109,9 @@ class DisabledSpecPlayerDatabase:
 
     # setup
     def given_testing_database(self):
-        return PlayerDatabase(connection_url=self.connection_url,
+        return PlayerDatabase(mongo_client=self.mongo_client,
                               database_name=self.database_name)
 
     # tear down
     def teardown_testing_database(self):
-        mongo_client = pymongo.MongoClient(self.connection_url)
-        mongo_client.drop_database(self.database_name)
+        self.mongo_client.drop_database(self.database_name)

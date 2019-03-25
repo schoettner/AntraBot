@@ -1,6 +1,6 @@
-from tests.mocks.player_mock import PlayerMock
 from src.battle.battle_manager import BattleManager
 from src.battle.boss_loader import BossLoader
+from tests.mocks.player_mock import PlayerMock
 
 
 class SpecBattleManager:

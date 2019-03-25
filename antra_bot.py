@@ -1,11 +1,16 @@
 import sys
 
 import irc.bot
+import pymongo
 from irc.client import Event, ServerConnection
 
-from src.command.general_command_handler import GeneralCommandHandler
+from src.battle.battle_manager import BattleManager
+from src.battle.boss_loader import BossLoader
 from src.command.battle_command_handler import BattleCommandHandler
+from src.command.general_command_handler import GeneralCommandHandler
 from src.command.vys_command_handler import VysCommandHandler
+from src.player.player_database import PlayerDatabase
+from src.upgrade.upgrade_loader import UpgradeLoader
 from src.util.bot_utils import get_channel_id, get_command, is_superior_user
 
 
@@ -25,9 +30,22 @@ class AntraBot(irc.bot.SingleServerIRCBot):
         print('Connecting to ' + server + ' on port ' + str(port) + '...')
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port, 'oauth:'+token)], username, username)
 
+        # created instances for battle handler
+        database = str(mongo_uri).split(sep='/')[-1:][0]
+        boss_loader = BossLoader()
+        battle_manager = BattleManager(boss_loader)
+        mongo_client = pymongo.MongoClient(mongo_uri)
+        player_database = PlayerDatabase(mongo_client, database)
+        upgrade_loader = UpgradeLoader()
+
         # create the command handlers
         self.general_command_handler = GeneralCommandHandler(self.connection, channel)
-        self.battle_command_handler = BattleCommandHandler(self.connection, channel, 50, mongo_uri)
+        self.battle_command_handler = BattleCommandHandler(connection=self.connection,
+                                                           channel=channel,
+                                                           battle_manager=battle_manager,
+                                                           player_database=player_database,
+                                                           upgrade_loader=upgrade_loader,
+                                                           geo_reward=50)
         self.vys_command_handler = VysCommandHandler(self.connection, channel)
 
     def on_welcome(self, c: ServerConnection, e: Event):
