@@ -4,7 +4,7 @@ class EventMock(Event):
 
     def __init__(self):
         super().__init__(None, None, None)
-        self.arguments = ['!bot']
+        self.arguments = ['!buy 10']
         self.tags = [
             {'key': 'badges', 'value': 'moderator/1,subscriber/0'},
             {'key': 'color', 'value': None},

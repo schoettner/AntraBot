@@ -1,5 +1,3 @@
-from irc.client import Event
-
 from mocks.event_mock import EventMock
 from src.command.command_handler import CommandHandler
 
@@ -11,13 +9,23 @@ class SpecCommandHandler:
         handler.public_command(None, None)
         handler.special_command(None, None)
 
-    def test_full_message(self):
+    def test_event_support_commands(self):
+        # test all the support commands for all command handler
         handler = self.given_default_command_handler()
-        event = EventMock()
-        event.arguments = ['!buy whatever']
+        event = self.given_default_event()
 
         message = handler.get_full_message(event)
-        assert message == '!buy whatever'
+        assert message == '!buy 10'
+
+        name = handler.get_twitch_name(event)
+        assert name == 'antrazith'
+
+        sub = handler.is_sub(event)
+        assert sub is True
+
+    @staticmethod
+    def given_default_event():
+        return EventMock()
 
     @staticmethod
     def given_default_command_handler():
