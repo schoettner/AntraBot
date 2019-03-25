@@ -1,4 +1,4 @@
-from upgrade.upgrade_loader import UpgradeLoader
+from src.upgrade.upgrade_loader import UpgradeLoader
 
 
 class UpgradeLoaderMock(UpgradeLoader):

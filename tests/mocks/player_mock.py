@@ -1,4 +1,4 @@
-from player.player import Player
+from src.player.player import Player
 
 
 class PlayerMock(Player):

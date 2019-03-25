@@ -1,4 +1,4 @@
-from mocks.event_mock import EventMock
+from tests.mocks.event_mock import EventMock
 from src.command.command_handler import CommandHandler
 
 

@@ -1,4 +1,4 @@
-from util.message_handler import MessageHandler
+from src.util.message_handler import MessageHandler
 
 
 class MessageHandlerMock(MessageHandler):

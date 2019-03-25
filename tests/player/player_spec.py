@@ -1,4 +1,4 @@
-from mocks.upgrade_loader_mock import UpgradeLoaderMock
+from tests.mocks.upgrade_loader_mock import UpgradeLoaderMock
 from src.player.player_database import PlayerDatabase
 from src.player.player import Player
 

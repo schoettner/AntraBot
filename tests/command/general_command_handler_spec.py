@@ -1,6 +1,6 @@
-from command.general_command_handler import GeneralCommandHandler
-from mocks.event_mock import EventMock
-from mocks.message_handler_mock import MessageHandlerMock
+from src.command.general_command_handler import GeneralCommandHandler
+from tests.mocks.event_mock import EventMock
+from tests.mocks.message_handler_mock import MessageHandlerMock
 
 
 class SpecGeneralCommandHandler:
