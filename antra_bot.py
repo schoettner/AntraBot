@@ -30,7 +30,7 @@ class AntraBot(irc.bot.SingleServerIRCBot):
         print('Connecting to ' + server + ' on port ' + str(port) + '...')
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port, 'oauth:'+token)], username, username)
 
-        # created instances for battle handler
+        # created instances for battle handler. wish i had dependency injection...
         database = str(mongo_uri).split(sep='/')[-1:][0]
         boss_loader = BossLoader()
         battle_manager = BattleManager(boss_loader)

@@ -1,5 +1,5 @@
 from src.player.player import Player
-from tests.mocks.player_database_mock import DatabaseMock
+from tests.mocks.player_database_mock import PlayerDatabaseMock
 from tests.mocks.upgrade_loader_mock import UpgradeLoaderMock
 
 
@@ -80,7 +80,7 @@ class SpecPlayer:
 
     @staticmethod
     def given_default_database():
-        return DatabaseMock()
+        return PlayerDatabaseMock()
 
     @staticmethod
     def given_default_upgrade_loader():

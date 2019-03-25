@@ -3,7 +3,7 @@ import mongomock
 from src.player.player_database import PlayerDatabase
 
 
-class DatabaseMock(PlayerDatabase):
+class PlayerDatabaseMock(PlayerDatabase):
 
     def __init__(self):
         super().__init__(mongomock.MongoClient())
