@@ -19,18 +19,18 @@ class MessageHandler(object):
         """
         self.connection.privmsg(self.channel, message)
 
-    def send_public_cooldown_message(self, message: str, target: str):
+    def send_public_cooldown_message(self, message: str, sender: str):
         """
         send a message to the public chat. to prevent spam, the sender is set to a cooldown time
         :param message:
-        :param target:
+        :param sender:
         """
-        if self.cache.get(target) is None:
-            self.cache[target] = 'locked'
+        if self.cache.get(sender) is None:
+            self.cache[sender] = 'locked'
             self.connection.privmsg(self.channel, message)
             return
         else:
-            print('chatter %s is still on cooldown' % target)
+            print('chatter %s is still on cooldown' % sender)
 
     def send_private_message(self, message: str, target: str):
         """

@@ -1,3 +1,4 @@
+from mocks.player_mock import PlayerMock
 from src.battle.battle_manager import BattleManager
 from src.battle.boss_loader import BossLoader
 from src.player.player import Player
@@ -9,13 +10,13 @@ class SpecBattleManager:
         player = self.given_default_player()
         battle_manager = self.given_default_battle_manager()
         fight_results = battle_manager.fight_boss(player=player, boss_id=0)
-        assert fight_results == 'Training Dummy was defeated. Glory to dummy, the mighty warrior.'
+        assert fight_results == 'Training Dummy was defeated. Glory to antrazith, the mighty warrior.'
 
     def test_player_defeat(self):
         player = self.given_default_player()
         battle_manager = self.given_default_battle_manager()
         fight_results = battle_manager.fight_boss(player=player, boss_id=45)
-        assert fight_results == 'Absolute Radiance was victorious. dummy disappears into the void.'
+        assert fight_results == 'Absolute Radiance was victorious. antrazith disappears into the void.'
 
     def test_fight_random_boss(self):
         player = self.given_default_player()
@@ -43,23 +44,3 @@ class SpecBattleManager:
     @staticmethod
     def given_default_player():
         return PlayerMock()
-
-
-# player mock
-class PlayerMock(Player):
-
-    def __init__(self):
-        super().__init__(None, None, None)
-        self.profile = {'strength': 10, 'name': 'dummy', 'geo': 1, 'score': 0, 'upgrades': [0]}
-
-    def get_strength(self):
-        return 10
-
-    def set_player_score(self, name: str, score: int):
-        pass
-
-    def reward_points(self, points: int = 0):
-        pass
-
-    def revoke_points(self, points: int = 0):
-        pass
