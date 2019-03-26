@@ -51,8 +51,9 @@ def has_badge(e: Event, badge_name: str = 'moderator'):
     :param badge_name: the badge you are looking for
     :return: if the badge is in the list
     """
-    badges = e.tags[0]
-    badges_value = badges['value']
+
+    badges_tag = list(filter(lambda tag: tag['key'] == 'badges', e.tags))
+    badges_value = badges_tag[0]['value']
     if badges_value is None:
         return False
     return badge_name in badges_value

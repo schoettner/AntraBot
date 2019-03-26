@@ -49,7 +49,6 @@ class BattleCommandHandler(CommandHandler):
         if self.cache.get(name) is not None:
             print('viewer %s is still locked' % name)
             return
-        self.cache[name] = 'locked'
 
         # stats commands
         if cmd == "stats":
@@ -92,6 +91,12 @@ class BattleCommandHandler(CommandHandler):
             else:
                 message = 'You entered an invalid number. Can not buy that item. Use !buy <upgrade_id>'
             self.message_handler.send_public_message(message)
+        else:
+            # not a valid command
+            return
+
+        # a valid command was executed, now lock the user for using one again soon
+        self.cache[name] = 'locked'
 
     def special_command(self, e: Event, cmd: str):
         # geo commands

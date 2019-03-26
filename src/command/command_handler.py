@@ -51,7 +51,8 @@ class CommandHandler(object):
         :param e: The twitch event
         :return: the name of the event sender in lower case
         """
-        name = e.tags[2]['value']  # get the display name
+        name_tag = list(filter(lambda tag: tag['key'] == 'display-name', e.tags))
+        name = name_tag[0]['value']  # get the display name
         return str(name).lower()
 
     @staticmethod
@@ -62,5 +63,6 @@ class CommandHandler(object):
         :param e:
         :return:
         """
-        is_subscribed = e.tags[8]['value']  # is subbed this is 1 (as str)
+        sub_tag = list(filter(lambda tag: tag['key'] == 'subscriber', e.tags))
+        is_subscribed = sub_tag[0]['value']  # is subbed this is 1 (as str)
         return is_subscribed == '1'
