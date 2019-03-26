@@ -8,3 +8,4 @@ deploy:
   provider: heroku
   app: antrabot
   api_key: $HEROKU_AUTH_TOKEN
+  run: heroku ps:scale worker=1
