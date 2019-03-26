@@ -36,8 +36,8 @@ class GeneralCommandHandler(CommandHandler):
         if cmd == "antra":
             print(e)
             # self.message_handler.send_public_cooldown_message(message='hello', target='antrazith')
-            # message = "This is a debug command for the dark lord himself. Do not worry about it."
-            # self.message_handler.send_public_message(message)
+            message = "This is a debug command for the dark lord himself. Do not worry about it."
+            self.message_handler.send_public_message(message)
         elif cmd == "welcome":
             message = ("Welcome new follower. You made a wise choice to follow %s. Sit back and enjoy your time." % self.channel)
             self.message_handler.send_public_message(message)
