@@ -8,3 +8,5 @@ deploy:
   provider: heroku
   app: antrabot
   api_key: $HEROKU_AUTH_TOKEN
+  on:
+    branch: master
