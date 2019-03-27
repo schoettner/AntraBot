@@ -72,7 +72,6 @@ class AntraBot(irc.bot.SingleServerIRCBot):
         :param e: the irc event of type pubmsg . it contains sender, message, badges etc
         """
         # get the command
-        print(e)
         cmd = get_command(e)
         if cmd is None:
             # leave early if there is no command
