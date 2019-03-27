@@ -35,13 +35,12 @@ class MessageHandler(object):
     def send_private_message(self, message: str, target: str):
         """
         send a whisper message from the bot to the target
+
+        keep in mind that this requires your token to have the whispers:read whispers:edit scopes!
+        you can whisper from your own channel. jtv as channel is not required anymore
+
         :param message: the message you want to send
         :param target: the twitch player nick to receive the whisper
         """
-        # todo fix this. does not work.
-        # self.connection.join('jtv')
-        # self.connection.send_items("PRIVMSG #jtv :.w " + target + " " + message)
-
-        new_message = '.w %s %s' % (target, message)
-        print(new_message + "\r\n")
-        self.connection.privmsg(target='jtv', text=new_message)
+        formatted_message = '.w %s %s' % (target, message)
+        self.connection.privmsg(target=self.channel, text=formatted_message)

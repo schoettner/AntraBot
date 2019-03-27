@@ -9,7 +9,7 @@ You can find end-user documentation on [Fandom](https://antrabot.fandom.com/wiki
 |info|detail|
 |-----------|----------------------------------------------------------------|
 | token url | https://twitchapps.com/tokengen/#                              |
-| scope     | chat:read chat:edit                                            |
+| scope     | chat:read chat:edit whispers:read whispers:edit                |
 | note      | login with the AntrasBot twitch account for the token creation |
 
 

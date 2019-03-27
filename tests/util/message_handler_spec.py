@@ -36,7 +36,7 @@ class SpecMessageHandler:
         message_handler.send_private_message(message='secret whisper', target='hidden_person')
 
         assert message_handler.connection.text == '.w hidden_person secret whisper'
-        assert message_handler.connection.target == 'jtv'
+        assert message_handler.connection.target == 'testing_channel'
 
     def given_default_message_handler(self):
         return MessageHandler(connection=ConnectionMock(), channel='testing_channel')

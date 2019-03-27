@@ -48,6 +48,9 @@ class BattleCommandHandler(CommandHandler):
         name = self.get_twitch_name(e)
         if self.cache.get(name) is not None:
             print('viewer %s is still locked' % name)
+            self.message_handler.send_private_message(message='You recently used !stats, !fight, !upgrade or another battle command.'
+                                                              'Please wait 60 seconds before the next try.',
+                                                      target=name)
             return
 
         # stats commands
