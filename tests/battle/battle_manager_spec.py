@@ -30,7 +30,7 @@ class SpecBattleManager:
     def test_player_defeat(self):
         player = self.given_default_player()
         battle_manager = self.given_default_battle_manager()
-        fight_results = battle_manager.fight_boss(player=player, boss_id=45)
+        fight_results = battle_manager.fight_boss(player=player, boss_id=46)
         assert fight_results == 'Absolute Radiance was victorious. antrazith disappears into the void.'
 
     def test_fight_random_boss(self):
@@ -42,7 +42,7 @@ class SpecBattleManager:
     def test_boss_id_to_high(self):
         player = self.given_default_player()
         battle_manager = self.given_default_battle_manager()
-        fight_results = battle_manager.fight_boss(player=player, boss_id=46)
+        fight_results = battle_manager.fight_boss(player=player, boss_id=47)
         assert fight_results == 'The boss id you try to fight is not valid.'
 
     def test_boss_id_to_low(self):

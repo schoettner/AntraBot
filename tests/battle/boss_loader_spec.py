@@ -6,7 +6,7 @@ class SpecBossLoader:
     def test_all_bosses(self):
         bosses = self.given_default_bosses()
         all_bosses, boss_number = bosses.get_all_bosses()
-        assert boss_number == 46
+        assert boss_number == 47
 
     def test_first_boss(self):
         bosses = self.given_default_bosses()
@@ -16,7 +16,7 @@ class SpecBossLoader:
 
     def test_last_boss(self):
         bosses = self.given_default_bosses()
-        boss_name, boss_strength = bosses.get_boss(boss_id=45)
+        boss_name, boss_strength = bosses.get_boss(boss_id=46)
         assert boss_name == 'Absolute Radiance'
         assert boss_strength == 191
 
