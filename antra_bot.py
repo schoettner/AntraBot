@@ -55,7 +55,7 @@ class AntraBot(irc.bot.SingleServerIRCBot):
         for more details on this
 
         :param c: server connection
-        :param e: event
+        :param e: the irc event of type welcome
         """
         print('Joining ' + self.channel)
         # You must request specific capabilities before you can use them
@@ -69,9 +69,10 @@ class AntraBot(irc.bot.SingleServerIRCBot):
         this is called every time a message is received. keep this signature due to the icr interface
 
         :param c: the server connection. can be used to transfer an message
-        :param e: the event. it contains sender, message, badges etc
+        :param e: the irc event of type pubmsg . it contains sender, message, badges etc
         """
         # get the command
+        print(e)
         cmd = get_command(e)
         if cmd is None:
             # leave early if there is no command
@@ -88,6 +89,14 @@ class AntraBot(irc.bot.SingleServerIRCBot):
             self.general_command_handler.special_command(e, cmd)
             self.battle_command_handler.special_command(e, cmd)
             self.vys_command_handler.special_command(e, cmd)
+
+    def on_whisper(self, c: ServerConnection, e: Event):
+        """
+        :param c: server connection
+        :param e: irc event of type whisper
+        :return:
+        """
+        print(e)
 
 
 def main():

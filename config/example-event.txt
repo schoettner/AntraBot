@@ -34,5 +34,15 @@ tags: [
 {'value': None, 'key': 'user-type'}
 ]
 
-
-StreamElements: Thank you for following <name> :)
+# whisper event from me to the bot
+type: whisper, source: antrazith!antrazith@antrazith.tmi.twitch.tv, target: antrasbot,
+arguments: ['test'],
+tags: [{'value': None, 'key': 'badges'},
+{'value': None, 'key': 'color'},
+{'value': 'antrazith', 'key': 'display-name'},
+{'value': None, 'key': 'emotes'},
+{'value': '20', 'key': 'message-id'},
+{'value': '60432977_420219338', 'key': 'thread-id'},
+{'value': '0', 'key': 'turbo'},
+{'value': '60432977', 'key': 'user-id'},
+{'value': None, 'key': 'user-type'}]
