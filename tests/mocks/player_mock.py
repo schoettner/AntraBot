@@ -8,7 +8,7 @@ class PlayerMock(Player):
         self.profile = {'strength': 10, 'name': 'antrazith', 'geo': 1, 'score': 0, 'upgrades': [0]}
 
     def get_strength(self):
-        return 10
+        return self.profile['strength']
 
     def set_player_score(self, name: str, score: int):
         pass
@@ -18,3 +18,6 @@ class PlayerMock(Player):
 
     def revoke_points(self, points: int = 0):
         pass
+
+    def add_geo(self, geo: int = 10):
+        self.profile['geo'] += geo
