@@ -6,12 +6,12 @@
   },
   {
     "id": 1,
-    "name": "Vengefly King",
+    "name": "Gruz Mother",
     "strength": 11
   },
   {
     "id": 2,
-    "name": "Massive Moss Charger",
+    "name": "Vengefly King ",
     "strength": 15
   },
   {
@@ -26,17 +26,17 @@
   },
   {
     "id": 5,
-    "name": "Brooding Mawlek ",
+    "name": "Brooding Mawlek",
     "strength": 23
   },
   {
     "id": 6,
-    "name": "Winged Nosk ",
+    "name": "Winged Nosk",
     "strength": 27
   },
   {
     "id": 7,
-    "name": "Soul Warrior ",
+    "name": "Soul Warrior",
     "strength": 31
   },
   {
@@ -166,7 +166,7 @@
   },
   {
     "id": 33,
-    "name": "Soul tyrant",
+    "name": "Soul Tyrant",
     "strength": 139
   },
   {
