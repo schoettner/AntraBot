@@ -6,7 +6,7 @@
   },
   {
     "id": 1,
-    "name": "Gruz Mother",
+    "name": "Vengefly King",
     "strength": 11
   },
   {
@@ -16,192 +16,192 @@
   },
   {
     "id": 3,
+    "name": "Massive Moss Charger",
+    "strength": 15
+  },
+  {
+    "id": 4,
     "name": "False Knight",
     "strength": 19
   },
   {
-    "id": 4,
+    "id": 5,
     "name": "Brooding Mawlek ",
     "strength": 23
   },
   {
-    "id": 5,
+    "id": 6,
     "name": "Winged Nosk ",
     "strength": 27
   },
   {
-    "id": 6,
+    "id": 7,
     "name": "Soul Warrior ",
     "strength": 31
   },
   {
-  "id": 7,
-  "name": "Hornet Protector",
-  "strength": 35
-  },
-  {
-  "id": 8,
-  "name": "Mantis Lords",
-  "strength": 39
+    "id": 8,
+    "name": "Hornet Protector",
+    "strength": 35
   },
   {
     "id": 9,
+    "name": "Mantis Lords",
+    "strength": 39
+  },
+  {
+    "id": 10,
     "name": "Uumuu",
     "strength": 43
   },
   {
-    "id": 10,
+    "id": 11,
     "name": "Marmu",
     "strength": 47
   },
   {
-    "id": 11,
+    "id": 12,
     "name": "Gorb",
     "strength": 51
   },
   {
-    "id": 12,
+    "id": 13,
     "name": "Elder Hu",
     "strength": 55
   },
   {
-    "id": 13,
+    "id": 14,
     "name": "Flukemarm",
     "strength": 59
   },
   {
-    "id": 14,
+    "id": 15,
     "name": "Hive Knight",
     "strength": 63
   },
   {
-    "id": 15,
+    "id": 16,
     "name": "Oblobbles",
     "strength": 67
   },
   {
-    "id": 16,
+    "id": 17,
     "name": "Soul Master",
     "strength": 71
   },
   {
-    "id": 17,
+    "id": 18,
     "name": "Nosk",
     "strength": 75
   },
   {
-    "id": 18,
+    "id": 19,
     "name": "Xero",
     "strength": 79
   },
   {
-    "id": 19,
-    "name": "Broken Vessel ",
+    "id": 20,
+    "name": "Broken Vessel",
     "strength": 83
   },
   {
-    "id": 20,
+    "id": 21,
     "name": "God Tamer",
     "strength": 87
   },
   {
-    "id": 21,
+    "id": 22,
     "name": "Dung Defender",
     "strength": 91
   },
   {
-    "id": 22,
+    "id": 23,
     "name": "Crystal Guardian",
     "strength": 95
   },
   {
-    "id": 23,
+    "id": 24,
     "name": "Sheo",
     "strength": 99
   },
   {
-    "id": 24,
+    "id": 25,
     "name": "No Eyes",
     "strength": 103
   },
   {
-    "id": 25,
+    "id": 26,
     "name": "Oro and Mato",
     "strength": 107
   },
   {
-    "id": 26,
-    "name": "The Collector",
-    "strength": 111
-  },
-  {
     "id": 27,
-    "name": "Hollow Knight",
+    "name": "The Collector",
     "strength": 115
   },
   {
     "id": 28,
-    "name": "Traitor Lord",
+    "name": "Hollow Knight",
     "strength": 119
   },
   {
     "id": 29,
-    "name": "Hornet Sentinel",
+    "name": "Traitor Lord",
     "strength": 123
   },
   {
     "id": 30,
-    "name": "Markoth",
+    "name": "Hornet Sentinel",
     "strength": 127
   },
   {
     "id": 31,
-    "name": "Galien",
+    "name": "Markoth",
     "strength": 131
   },
   {
     "id": 32,
-    "name": "Soul Tyrant",
+    "name": "Galien",
     "strength": 135
   },
   {
     "id": 33,
-    "name": "Lost Kin ",
+    "name": "Soul tyrant",
     "strength": 139
   },
   {
     "id": 34,
-    "name": "Grimm",
+    "name": "Lost Kin",
     "strength": 143
   },
   {
     "id": 35,
-    "name": "Nailsage Sly",
+    "name": "Grimm",
     "strength": 147
   },
   {
     "id": 36,
-    "name": "White Defender ",
+    "name": "Nailsage Sly",
     "strength": 151
   },
   {
     "id": 37,
-    "name": "Enraged Guardian",
+    "name": "White Defender",
     "strength": 155
   },
   {
     "id": 38,
-    "name": "Grey Prince Zote",
+    "name": "Enraged Guardian",
     "strength": 159
   },
   {
     "id": 39,
-    "name": "Watcher Knights",
+    "name": "Grey Prince Zote",
     "strength": 163
   },
   {
     "id": 40,
-    "name": "Nailsage Sly",
+    "name": "Watcher Knights",
     "strength": 167
   },
   {
