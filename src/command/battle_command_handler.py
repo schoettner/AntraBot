@@ -70,7 +70,7 @@ class BattleCommandHandler(CommandHandler):
         elif cmd == "random":
             player = self.get_player_by_event(e)
             message = self.battle_manager.fight_random_boss(player)
-            self.message_handler.send_private_message(message=message, target=player)
+            self.message_handler.send_private_message(message=message, target=name)
         elif cmd == "fight":
             received_id = e.arguments[0][7:]  # get message and remove first 7 chars '!fight '
             player = self.get_player_by_event(e)
@@ -79,7 +79,7 @@ class BattleCommandHandler(CommandHandler):
                 message = self.battle_manager.fight_boss(player, boss_id)
             else:
                 message = 'You entered an invalid number. Can not fight that boss.'
-            self.message_handler.send_private_message(message=message, target=player)
+            self.message_handler.send_private_message(message=message, target=name)
 
         # upgrade commands
         elif cmd == "upgrades":
@@ -93,7 +93,7 @@ class BattleCommandHandler(CommandHandler):
                 message = player.buy_upgrade(upgrade_id)  # upgrade your nail
             else:
                 message = 'You entered an invalid number. Can not buy that item. Use !buy <upgrade_id>'
-            self.message_handler.send_private_message(message=message, target=player)
+            self.message_handler.send_private_message(message=message, target=name)
         else:
             # not a valid command
             return
