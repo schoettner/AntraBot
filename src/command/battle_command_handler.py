@@ -70,16 +70,16 @@ class BattleCommandHandler(CommandHandler):
         elif cmd == "random":
             player = self.get_player_by_event(e)
             message = self.battle_manager.fight_random_boss(player)
-            self.message_handler.send_public_message(message)
+            self.message_handler.send_private_message(message=message, target=player)
         elif cmd == "fight":
             received_id = e.arguments[0][7:]  # get message and remove first 7 chars '!fight '
+            player = self.get_player_by_event(e)
             if str(received_id).isnumeric():  # check if the given id is valid
-                player = self.get_player_by_event(e)
                 boss_id = int(received_id)
                 message = self.battle_manager.fight_boss(player, boss_id)
             else:
                 message = 'You entered an invalid number. Can not fight that boss.'
-            self.message_handler.send_public_message(message)
+            self.message_handler.send_private_message(message=message, target=player)
 
         # upgrade commands
         elif cmd == "upgrades":
@@ -87,13 +87,13 @@ class BattleCommandHandler(CommandHandler):
             self.message_handler.send_public_message(message)
         elif cmd == "buy":
             received_id = e.arguments[0][5:]  # get message and remove first 5 chars '!buy '
+            player = self.get_player_by_event(e)
             if str(received_id).isnumeric():  # check if the given id is valid
-                player = self.get_player_by_event(e)
                 upgrade_id = int(received_id)  # need to cast the str i.e. to int
                 message = player.buy_upgrade(upgrade_id)  # upgrade your nail
             else:
                 message = 'You entered an invalid number. Can not buy that item. Use !buy <upgrade_id>'
-            self.message_handler.send_public_message(message)
+            self.message_handler.send_private_message(message=message, target=player)
         else:
             # not a valid command
             return
