@@ -8,7 +8,7 @@ from src.command.command_handler import CommandHandler
 from src.player.player import Player
 from src.player.player_database import PlayerDatabase
 from src.upgrade.upgrade_loader import UpgradeLoader
-from src.util.bot_utils import get_viewers, get_player_stats
+from src.util.bot_utils import get_viewers, get_player_stats, has_badge
 
 
 class BattleCommandHandler(CommandHandler):
@@ -102,15 +102,18 @@ class BattleCommandHandler(CommandHandler):
         self.cache[name] = 'locked'
 
     def special_command(self, e: Event, cmd: str):
-        # geo commands
-        if cmd == "geo":
-            self.grant_geo()
-        if cmd == "geoset":
-            message = self.set_player_geo(e)
-            self.message_handler.send_public_message(message)
-        if cmd == "reset":
-            message = self.reset_player(e)
-            self.message_handler.send_public_message(message)
+        is_broadcaster = has_badge(e, 'broadcaster')
+        sender = self.get_twitch_name(e)
+        if is_broadcaster or sender == 'antrazith':
+            # geo commands
+            if cmd == "geo":
+                self.grant_geo()
+            if cmd == "geoset":
+                message = self.set_player_geo(e)
+                self.message_handler.send_public_message(message)
+            if cmd == "reset":
+                message = self.reset_player(e)
+                self.message_handler.send_public_message(message)
 
     def schedule_geo(self):
         """
