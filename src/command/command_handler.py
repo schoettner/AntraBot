@@ -1,3 +1,4 @@
+import requests
 from irc.client import Event, ServerConnection
 
 from src.util.message_handler import MessageHandler
@@ -66,3 +67,13 @@ class CommandHandler(object):
         sub_tag = list(filter(lambda tag: tag['key'] == 'subscriber', e.tags))
         is_subscribed = sub_tag[0]['value']  # is subbed this is 1 (as str)
         return is_subscribed == '1'
+
+    def broadcaster_online(self):
+        """
+        check if the broadcaster is online
+        :return: True if the broadcaster is in its channel, False if not
+        """
+        url = 'https://tmi.twitch.tv/group/user/%s/chatters' % self.channel
+        request_results = requests.get(url).json()['chatters']
+        broadcaster = request_results['broadcaster']
+        return len(broadcaster) == 1

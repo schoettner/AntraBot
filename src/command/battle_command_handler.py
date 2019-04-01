@@ -44,13 +44,20 @@ class BattleCommandHandler(CommandHandler):
 
     def public_command(self, e: Event, cmd: str):
 
+        # prevent people abuse the bot when the broadcaster is offline
+        if not self.broadcaster_online():
+            message = 'Broadcaster is not online. Please come back later'
+            self.message_handler.send_public_message(message)
+            return
+
         # prevent people spam
         name = self.get_twitch_name(e)
         if self.cache.get(name) is not None:
             print('viewer %s is still locked' % name)
-            self.message_handler.send_private_message(message='You recently used !stats, !fight, !upgrade or another battle command.'
-                                                              'Please wait 60 seconds before the next try.',
-                                                      target=name)
+            self.message_handler.send_private_message(
+                message='You recently used !stats, !fight, !upgrade or another battle command.'
+                        'Please wait 60 seconds before the next try.',
+                target=name)
             return
 
         # stats commands
@@ -126,9 +133,9 @@ class BattleCommandHandler(CommandHandler):
         """
         give geo to everyone who is in chat
         """
-        viewers = get_viewers(self.channel)
-        if len(viewers) == 0:  # no viewers or broadcaster not online
+        if not self.broadcaster_online():
             return
+        viewers = get_viewers(self.channel)
         for viewer in viewers:
             player = self.get_player_by_name(viewer)
             player.add_geo(geo=self.geo_reward)
