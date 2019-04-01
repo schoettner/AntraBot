@@ -95,7 +95,8 @@ def get_viewers(channel: str, include_all: bool = True):
     vips = request_results['vips']
     mods = request_results['moderators']
 
-    return channel_viewers + broadcaster + vips + mods
+    # only return viewers if the broadcaster is online itself
+    return channel_viewers + broadcaster + vips + mods if len(broadcaster) == 1 else []
 
 
 def read_random_line_from_file(file_name: str):

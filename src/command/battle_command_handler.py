@@ -124,6 +124,8 @@ class BattleCommandHandler(CommandHandler):
         give geo to everyone who is in chat
         """
         viewers = get_viewers(self.channel)
+        if len(viewers) == 0:  # no viewers or broadcaster not online
+            return
         for viewer in viewers:
             player = self.get_player_by_name(viewer)
             player.add_geo(geo=self.geo_reward)
