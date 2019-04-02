@@ -42,6 +42,7 @@ class AntraBot(irc.bot.SingleServerIRCBot):
         self.general_command_handler = GeneralCommandHandler(self.connection, channel)
         self.battle_command_handler = BattleCommandHandler(connection=self.connection,
                                                            channel=channel,
+                                                           client_id=client_id,
                                                            battle_manager=battle_manager,
                                                            player_database=player_database,
                                                            upgrade_loader=upgrade_loader,

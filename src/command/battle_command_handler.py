@@ -1,4 +1,5 @@
 from threading import Timer
+import requests
 
 from expiringdict import ExpiringDict
 from irc.client import Event, ServerConnection
@@ -19,12 +20,14 @@ class BattleCommandHandler(CommandHandler):
     def __init__(self,
                  connection: ServerConnection,
                  channel: str,
+                 client_id: str,
                  battle_manager: BattleManager,
                  player_database: PlayerDatabase,
                  upgrade_loader: UpgradeLoader,
                  geo_reward: int = 10,
                  ):
         super().__init__(connection, channel)
+        self.client_id = client_id
 
         self.battle_manager = battle_manager
         self.player_database = player_database
@@ -204,3 +207,12 @@ class BattleCommandHandler(CommandHandler):
         for upgrade in upgrades:
             upgrade_names.append(upgrade['name'])
         return str(upgrade_names)
+
+    def broadcaster_online(self):
+        """
+        check if the broadcaster is online
+        :return: True if the broadcaster is in its channel, False if not
+        """
+        url = 'https://api.twitch.tv/kraken/streams?client_id=%s&channel=%s' % (self.client_id, self.channel)
+        r = requests.get(url).json()
+        return len(r['streams']) > 0
