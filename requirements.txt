@@ -4,3 +4,4 @@ expiringdict
 requests
 pytest
 mongomock
+cachetools

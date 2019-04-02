@@ -3,6 +3,7 @@ import requests
 
 from expiringdict import ExpiringDict
 from irc.client import Event, ServerConnection
+from cachetools import cached, TTLCache
 
 from src.battle.battle_manager import BattleManager
 from src.command.command_handler import CommandHandler
@@ -16,6 +17,8 @@ class BattleCommandHandler(CommandHandler):
     """
     handles all battle related commands
     """
+
+    cache = TTLCache(maxsize=50, ttl=300)  # 50 calls or 5 min
 
     def __init__(self,
                  connection: ServerConnection,
@@ -208,11 +211,13 @@ class BattleCommandHandler(CommandHandler):
             upgrade_names.append(upgrade['name'])
         return str(upgrade_names)
 
+    @cached(cache)
     def broadcaster_online(self):
         """
         check if the broadcaster is online
         :return: True if the broadcaster is in its channel, False if not
         """
+        print('doing a call')
         url = 'https://api.twitch.tv/kraken/streams?client_id=%s&channel=%s' % (self.client_id, self.channel)
         r = requests.get(url).json()
         return len(r['streams']) > 0
